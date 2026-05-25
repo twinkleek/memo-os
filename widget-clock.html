@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MEMO OS · Clock</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: transparent;
+  }
+  .clock-card {
+    width: 240px;
+    background: linear-gradient(180deg, #fff5f8 0%, #ffe4ec 100%);
+    border-radius: 24px;
+    padding: 16px 18px;
+    box-shadow:
+      0 8px 24px rgba(255, 143, 171, 0.20),
+      inset 0 0 0 1px #ffffff;
+    position: relative;
+  }
+  .clock-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: var(--pink-text);
+    margin-bottom: 10px;
+  }
+  .clock-header .date {
+    font-weight: 600;
+  }
+  .clock-header .dots {
+    letter-spacing: 1px;
+    color: var(--pink-mid);
+  }
+  .clock-display {
+    background: #ffffff;
+    background-image:
+      linear-gradient(90deg, transparent 49.5%, rgba(255,193,210,0.25) 49.5%, rgba(255,193,210,0.25) 50.5%, transparent 50.5%),
+      linear-gradient(0deg, transparent 49.5%, rgba(255,193,210,0.25) 49.5%, rgba(255,193,210,0.25) 50.5%, transparent 50.5%);
+    background-size: 8px 8px;
+    border-radius: 14px;
+    padding: 14px 18px;
+    box-shadow: inset 0 2px 6px rgba(255, 143, 171, 0.12);
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 4px;
+    white-space: nowrap;
+  }
+  .clock-time {
+    font-family: "Courier New", "DigitalNumbers", monospace;
+    font-weight: 700;
+    font-size: 46px;
+    line-height: 1;
+    color: #2a2a2a;
+    letter-spacing: -2px;
+  }
+  .clock-ampm {
+    font-family: "Courier New", monospace;
+    font-weight: 700;
+    font-size: 14px;
+    color: #2a2a2a;
+    padding-bottom: 6px;
+  }
+  .clock-side {
+    position: absolute;
+    right: -6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 30px;
+    background: var(--pink-mid);
+    border-radius: 4px;
+  }
+</style>
+</head>
+<body>
+  <div class="clock-card">
+    <div class="clock-header">
+      <span class="date">♥ <span id="date">5.25 SUN</span></span>
+      <span class="dots">···</span>
+    </div>
+    <div class="clock-display">
+      <span class="clock-time" id="time">05:08</span><span class="clock-ampm" id="ampm">PM</span>
+      <div class="clock-side"></div>
+    </div>
+  </div>
+<script>
+  function pad(n){return String(n).padStart(2,'0');}
+  const DOW = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  function tick(){
+    const d = new Date();
+    let h = d.getHours();
+    const m = pad(d.getMinutes());
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12; if (h === 0) h = 12;
+    document.getElementById('time').textContent = pad(h) + ':' + m;
+    document.getElementById('ampm').textContent = ampm;
+    document.getElementById('date').textContent =
+      (d.getMonth()+1) + '.' + d.getDate() + ' ' + DOW[d.getDay()];
+  }
+  tick();
+  setInterval(tick, 1000);
+</script>
+</body>
+</html>

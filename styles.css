@@ -1,0 +1,91 @@
+/* MEMO OS - Shared Pink Theme Styles */
+
+:root {
+  --pink-bg: #fff5f8;
+  --pink-soft: #ffe4ec;
+  --pink-mid: #ffd1dc;
+  --pink-accent: #ff8fab;
+  --pink-text: #e07097;
+  --peach: #ffe6d4;
+  --mint: #e0f5e0;
+  --cream: #fff8d4;
+  --blue: #d4e5f9;
+  --purple: #e8d8f9;
+  --gray: #f0f0f0;
+  --text: #5a4a52;
+  --text-light: #a08894;
+  --border: #f5d8e2;
+  --shadow: 0 2px 8px rgba(255, 143, 171, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Apple SD Gothic Neo",
+    "Segoe UI", system-ui, sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  background: transparent;
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+}
+
+input, textarea {
+  font-family: inherit;
+  outline: none;
+  border: none;
+  background: none;
+  color: inherit;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--pink-mid);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.section-label {
+  font-style: italic;
+  font-size: 12px;
+  color: var(--pink-text);
+  text-align: center;
+  margin: 8px 0 12px;
+  letter-spacing: 0.04em;
+}
+.section-label::before {
+  content: "";
+  display: inline-block;
+  width: 24px;
+  height: 8px;
+  background: var(--pink-soft);
+  border-radius: 4px;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+.section-label::after {
+  content: "";
+  display: inline-block;
+  width: 24px;
+  height: 8px;
+  background: var(--pink-soft);
+  border-radius: 4px;
+  margin-left: 8px;
+  vertical-align: middle;
+}

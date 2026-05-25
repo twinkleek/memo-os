@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "rewrites": [
+    { "source": "/api/list",   "destination": "/api/notion?action=list" },
+    { "source": "/api/create", "destination": "/api/notion?action=create" },
+    { "source": "/api/update", "destination": "/api/notion?action=update" },
+    { "source": "/api/delete", "destination": "/api/notion?action=delete" }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "name": "memo-os",
+  "version": "1.0.0",
+  "description": "SOMLUTION MEMO OS replica - Notion widget set",
+  "private": true,
+  "scripts": {
+    "dev": "python3 -m http.server 8100",
+    "deploy": "vercel --prod"
+  }
+}

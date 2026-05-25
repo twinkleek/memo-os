@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MEMO OS · Quick</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  body {
+    background: transparent;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .quick-widget {
+    width: 100%;
+    max-width: 420px;
+    background: #fff5f8;
+    border: 1.5px solid #ffd1dc;
+    border-radius: 16px;
+    padding: 12px 14px;
+    box-shadow: 0 4px 16px rgba(255, 143, 171, 0.14);
+  }
+  .quick-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--pink-text);
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .quick-form {
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+  }
+  .quick-textarea {
+    flex: 1;
+    background: white;
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--text);
+    border: 1px solid #ffe4ec;
+    resize: none;
+    min-height: 38px;
+    max-height: 200px;
+    line-height: 1.5;
+    overflow-y: auto;
+  }
+  .quick-textarea::placeholder {
+    color: var(--pink-mid);
+  }
+  .quick-send {
+    background: var(--pink-mid);
+    color: white;
+    border-radius: 12px;
+    padding: 9px 18px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s;
+    flex-shrink: 0;
+  }
+  .quick-send:hover {
+    background: var(--pink-accent);
+  }
+  .toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--pink-accent);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    opacity: 0;
+    transition: all 0.3s;
+    pointer-events: none;
+    z-index: 999;
+  }
+  .toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+</style>
+</head>
+<body>
+<div class="quick-widget">
+  <div class="quick-header">⚡ Quick Memo</div>
+  <div class="quick-form">
+    <textarea class="quick-textarea" id="qInput" placeholder="떠오른 생각을 바로 던져넣으세요..." rows="1"></textarea>
+    <button class="quick-send" id="qSend">SEND</button>
+  </div>
+</div>
+<div class="toast" id="toast">기록됨 ♥</div>
+<script src="api.js"></script>
+<script>
+  const QUICK_KEY = 'memoOS.quick';
+  const CHAT_KEY = 'memoOS.chat';
+  const input = document.getElementById('qInput');
+  const sendBtn = document.getElementById('qSend');
+  const toast = document.getElementById('toast');
+
+  input.addEventListener('input', () => {
+    input.style.height = 'auto';
+    input.style.height = Math.min(input.scrollHeight, 200) + 'px';
+  });
+
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 1200);
+  }
+
+  function send() {
+    const text = input.value.trim();
+    if (!text) return;
+    let chat = [];
+    try { chat = JSON.parse(localStorage.getItem(CHAT_KEY) || '[]'); } catch {}
+    const memo = {
+      id: Date.now() + '_' + Math.random().toString(36).slice(2,7),
+      text,
+      folder: 'MEMO',
+      important: false,
+      pinned: false,
+      isTodo: false,
+      checked: false,
+      reply: '',
+      images: [],
+      createdAt: Date.now()
+    };
+    chat.unshift(memo);
+    localStorage.setItem(CHAT_KEY, JSON.stringify(chat));
+
+    let quick = [];
+    try { quick = JSON.parse(localStorage.getItem(QUICK_KEY) || '[]'); } catch {}
+    quick.unshift(memo);
+    localStorage.setItem(QUICK_KEY, JSON.stringify(quick));
+
+    input.value = '';
+    input.style.height = 'auto';
+    showToast('기록됨 ♥');
+
+    if (window.MemoOSAPI && window.MemoOSAPI.enabled) {
+      window.MemoOSAPI.createMemo(memo).catch(console.error);
+    }
+  }
+
+  sendBtn.addEventListener('click', send);
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      send();
+    }
+  });
+  input.focus();
+</script>
+</body>
+</html>

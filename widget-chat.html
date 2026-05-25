@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MEMO OS · Chat</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  body {
+    background: transparent;
+    padding: 16px;
+    display: flex;
+    justify-content: center;
+  }
+  .chat-widget {
+    width: 100%;
+    max-width: 640px;
+    height: 540px;
+    background: #fff5f8;
+    border: 1.5px solid #ffd1dc;
+    border-radius: 18px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(255, 143, 171, 0.18);
+  }
+  .chat-tabs {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 12px;
+    background: #ffe4ec;
+    border-bottom: 1px solid #ffd1dc;
+    font-size: 11px;
+    color: var(--pink-text);
+    overflow-x: auto;
+  }
+  .chat-tabs::-webkit-scrollbar { height: 0; }
+  .tab {
+    padding: 4px 10px;
+    border-radius: 8px;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+  }
+  .tab.active {
+    background: #ffffff;
+    color: var(--pink-accent);
+    font-weight: 600;
+  }
+  .chat-controls {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+    color: var(--pink-mid);
+  }
+  .chat-body {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+  }
+  .chat-folders {
+    width: 84px;
+    padding: 12px 6px;
+    background: #fff5f8;
+    border-right: 1px solid #ffe4ec;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto;
+  }
+  .folder-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    font-size: 10px;
+    color: var(--text-light);
+    cursor: pointer;
+    user-select: none;
+  }
+  .folder-icon {
+    width: 32px;
+    height: 26px;
+    border-radius: 6px 6px 6px 6px;
+    position: relative;
+    background: #ffd1dc;
+  }
+  .folder-icon::before {
+    content: "";
+    position: absolute;
+    top: -3px;
+    left: 4px;
+    width: 14px;
+    height: 6px;
+    background: inherit;
+    border-radius: 4px 4px 0 0;
+  }
+  .folder-item[data-color="pink"] .folder-icon { background: #ffd1dc; }
+  .folder-item[data-color="peach"] .folder-icon { background: #ffd4b8; }
+  .folder-item[data-color="mint"] .folder-icon { background: #c8edd0; }
+  .folder-item[data-color="cream"] .folder-icon { background: #fff0b8; }
+  .folder-item[data-color="blue"] .folder-icon { background: #c8dbf0; }
+  .folder-item[data-color="purple"] .folder-icon { background: #dccbf0; }
+  .folder-item.active {
+    color: var(--pink-accent);
+    font-weight: 700;
+  }
+  .chat-stream {
+    flex: 1;
+    padding: 16px 14px 0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .bubble-row {
+    display: flex;
+    justify-content: flex-end;
+    position: relative;
+  }
+  .bubble {
+    max-width: 80%;
+    background: #ffe4ec;
+    color: var(--text);
+    padding: 9px 13px;
+    border-radius: 14px;
+    font-size: 13px;
+    line-height: 1.45;
+    word-break: break-word;
+    position: relative;
+    cursor: pointer;
+  }
+  .bubble.important {
+    background: #ffc1cc;
+  }
+  .bubble.pinned {
+    background: #ffd4b8;
+  }
+  .bubble.todo {
+    background: #ffffff;
+    border: 1px dashed #ffd1dc;
+  }
+  .bubble .checkbox {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 1.5px solid var(--pink-accent);
+    border-radius: 3px;
+    vertical-align: middle;
+    margin-right: 6px;
+    cursor: pointer;
+  }
+  .bubble.checked .checkbox {
+    background: var(--pink-accent);
+    position: relative;
+  }
+  .bubble.checked .checkbox::after {
+    content: "✓";
+    position: absolute;
+    top: -2px;
+    left: 1px;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+  }
+  .bubble.checked {
+    text-decoration: line-through;
+    opacity: 0.5;
+  }
+  .bubble-actions {
+    position: absolute;
+    top: -8px;
+    right: 8px;
+    display: none;
+    gap: 4px;
+    background: white;
+    padding: 4px 6px;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(255, 143, 171, 0.25);
+  }
+  .bubble-row:hover .bubble-actions {
+    display: flex;
+  }
+  .bubble-actions button {
+    font-size: 12px;
+    color: var(--text-light);
+    padding: 0 2px;
+  }
+  .bubble-actions button:hover {
+    color: var(--pink-accent);
+  }
+  .bubble-reply {
+    background: #fff5f8;
+    border-left: 2px solid var(--pink-accent);
+    padding: 6px 10px;
+    margin-top: 6px;
+    font-size: 11px;
+    color: var(--text-light);
+    border-radius: 0 8px 8px 0;
+  }
+  .bubble-images {
+    display: flex;
+    gap: 4px;
+    margin-top: 6px;
+    flex-wrap: wrap;
+  }
+  .bubble-images img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 6px;
+  }
+  .bubble-time {
+    font-size: 9px;
+    color: var(--text-light);
+    margin-top: 2px;
+    text-align: right;
+    padding-right: 4px;
+  }
+  .chat-input {
+    border-top: 1px solid #ffe4ec;
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff5f8;
+  }
+  .chat-input .camera-btn {
+    color: var(--pink-mid);
+    font-size: 18px;
+    cursor: pointer;
+  }
+  .chat-input input[type="text"] {
+    flex: 1;
+    background: white;
+    border-radius: 14px;
+    padding: 8px 12px;
+    font-size: 13px;
+    color: var(--text);
+    border: 1px solid #ffe4ec;
+  }
+  .chat-input input[type="text"]::placeholder {
+    color: var(--pink-mid);
+  }
+  .chat-input .send-btn {
+    background: var(--pink-mid);
+    color: white;
+    border-radius: 14px;
+    padding: 7px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .chat-input .send-btn:hover {
+    background: var(--pink-accent);
+  }
+  .empty-state {
+    color: var(--pink-mid);
+    text-align: center;
+    margin: auto;
+    font-size: 12px;
+  }
+  .preview-thumbs {
+    display: flex;
+    gap: 4px;
+    padding: 4px 12px;
+    background: #ffe4ec;
+    overflow-x: auto;
+  }
+  .preview-thumbs img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+  .preview-thumbs .remove-thumb {
+    position: absolute;
+    margin-top: -2px;
+    margin-left: -8px;
+    background: white;
+    border-radius: 50%;
+    width: 14px;
+    height: 14px;
+    font-size: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  }
+</style>
+</head>
+<body>
+<div class="chat-widget">
+  <div class="chat-tabs">
+    <div class="tab active" data-folder="all">🗂 ALL</div>
+    <div class="tab" data-folder="IDEA">IDEA</div>
+    <div class="tab" data-folder="TO DO">TO DO</div>
+    <div class="tab" data-folder="MEMO">MEMO</div>
+    <div class="tab" data-folder="PROMPT">PROMPT</div>
+    <div class="tab" data-folder="WORK">WORK</div>
+    <div class="tab" data-folder="ECT">ECT</div>
+    <div class="chat-controls">
+      <span>🖥</span><span>⛶</span><span>▢</span><span>⤢</span>
+    </div>
+  </div>
+
+  <div class="chat-body">
+    <div class="chat-folders">
+      <div class="folder-item active" data-color="pink" data-folder="IDEA">
+        <div class="folder-icon"></div>
+        <span>IDEA</span>
+      </div>
+      <div class="folder-item" data-color="peach" data-folder="고정">
+        <div class="folder-icon"></div>
+        <span>고정</span>
+      </div>
+      <div class="folder-item" data-color="purple" data-folder="TO DO">
+        <div class="folder-icon"></div>
+        <span>TO DO</span>
+      </div>
+      <div class="folder-item" data-color="peach" data-folder="중요">
+        <div class="folder-icon"></div>
+        <span>중요</span>
+      </div>
+      <div class="folder-item" data-color="cream" data-folder="MEMO">
+        <div class="folder-icon"></div>
+        <span>MEMO</span>
+      </div>
+      <div class="folder-item" data-color="mint" data-folder="PROMPT">
+        <div class="folder-icon"></div>
+        <span>PROMPT</span>
+      </div>
+      <div class="folder-item" data-color="blue" data-folder="WORK">
+        <div class="folder-icon"></div>
+        <span>WORK</span>
+      </div>
+      <div class="folder-item" data-color="pink" data-folder="ECT">
+        <div class="folder-icon"></div>
+        <span>ECT</span>
+      </div>
+    </div>
+
+    <div class="chat-stream" id="stream"></div>
+  </div>
+
+  <div class="preview-thumbs" id="previews" style="display:none;"></div>
+  <div class="chat-input">
+    <label class="camera-btn" title="이미지 첨부">
+      📷
+      <input type="file" id="imgInput" accept="image/*" multiple style="display:none">
+    </label>
+    <input type="text" id="memoInput" placeholder="memo">
+    <button class="send-btn" id="sendBtn">SEND</button>
+  </div>
+</div>
+
+<script src="api.js"></script>
+<script>
+  const STORE_KEY = 'memoOS.chat';
+  const stream = document.getElementById('stream');
+  const memoInput = document.getElementById('memoInput');
+  const sendBtn = document.getElementById('sendBtn');
+  const imgInput = document.getElementById('imgInput');
+  const previews = document.getElementById('previews');
+  let pendingImages = [];
+  let activeFolder = 'all';
+
+  function loadMemos() {
+    try { return JSON.parse(localStorage.getItem(STORE_KEY) || '[]'); }
+    catch { return []; }
+  }
+  function saveMemos(memos) {
+    localStorage.setItem(STORE_KEY, JSON.stringify(memos));
+  }
+
+  function fmtTime(ts) {
+    const d = new Date(ts);
+    const now = new Date();
+    const sameDay = d.toDateString() === now.toDateString();
+    const h = d.getHours(), m = d.getMinutes();
+    const ampm = h >= 12 ? '오후' : '오전';
+    const hh = ((h % 12) || 12);
+    if (sameDay) return `${ampm} ${hh}:${String(m).padStart(2,'0')}`;
+    return `${d.getMonth()+1}/${d.getDate()} ${ampm} ${hh}:${String(m).padStart(2,'0')}`;
+  }
+
+  function render() {
+    const memos = loadMemos();
+    const filtered = activeFolder === 'all'
+      ? memos
+      : (activeFolder === '중요' ? memos.filter(m => m.important)
+        : (activeFolder === '고정' ? memos.filter(m => m.pinned)
+        : memos.filter(m => m.folder === activeFolder)));
+
+    if (filtered.length === 0) {
+      stream.innerHTML = '<div class="empty-state">메모가 없습니다.<br>아래 입력창에 메모를 남겨보세요 ♥</div>';
+      return;
+    }
+
+    stream.innerHTML = filtered.map(memo => `
+      <div class="bubble-row" data-id="${memo.id}">
+        <div>
+          <div class="bubble ${memo.important?'important':''} ${memo.pinned?'pinned':''} ${memo.isTodo?'todo':''} ${memo.checked?'checked':''}">
+            ${memo.isTodo ? '<span class="checkbox" data-action="check"></span>' : ''}
+            ${escapeHtml(memo.text)}
+            ${memo.images && memo.images.length ? `
+              <div class="bubble-images">
+                ${memo.images.map(src => `<img src="${src}">`).join('')}
+              </div>` : ''}
+            ${memo.reply ? `<div class="bubble-reply">↳ ${escapeHtml(memo.reply)}</div>` : ''}
+          </div>
+          <div class="bubble-time">${fmtTime(memo.createdAt)}</div>
+        </div>
+        <div class="bubble-actions">
+          <button data-action="heart" title="중요">${memo.important?'♥':'♡'}</button>
+          <button data-action="pin" title="고정">${memo.pinned?'📌':'📍'}</button>
+          <button data-action="reply" title="답글">💬</button>
+          <button data-action="copy" title="복사">📋</button>
+          <button data-action="delete" title="삭제">🗑</button>
+        </div>
+      </div>
+    `).join('');
+
+    stream.scrollTop = stream.scrollHeight;
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    })[c]);
+  }
+
+  function send() {
+    const text = memoInput.value.trim();
+    if (!text && pendingImages.length === 0) return;
+    const isTodo = /^(\[\s?\]|☐|\/todo|\-\s*\[\s?\])/.test(text);
+    const cleanText = isTodo ? text.replace(/^(\[\s?\]|☐|\/todo\s*|\-\s*\[\s?\]\s*)/, '') : text;
+    const memos = loadMemos();
+    const folder = activeFolder !== 'all' && activeFolder !== '중요' && activeFolder !== '고정' ? activeFolder : 'MEMO';
+    memos.push({
+      id: Date.now() + '_' + Math.random().toString(36).slice(2,7),
+      text: cleanText,
+      folder,
+      important: false,
+      pinned: false,
+      isTodo,
+      checked: false,
+      reply: '',
+      images: pendingImages.slice(),
+      createdAt: Date.now()
+    });
+    saveMemos(memos);
+    memoInput.value = '';
+    pendingImages = [];
+    previews.innerHTML = '';
+    previews.style.display = 'none';
+    render();
+
+    if (window.MemoOSAPI && window.MemoOSAPI.enabled) {
+      window.MemoOSAPI.createMemo(memos[0]).catch(console.error);
+    }
+  }
+
+  sendBtn.addEventListener('click', send);
+  memoInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      send();
+    }
+  });
+
+  imgInput.addEventListener('change', async e => {
+    const files = Array.from(e.target.files);
+    for (const file of files) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        pendingImages.push(reader.result);
+        renderPreviews();
+      };
+      reader.readAsDataURL(file);
+    }
+    imgInput.value = '';
+  });
+
+  function renderPreviews() {
+    if (pendingImages.length === 0) {
+      previews.style.display = 'none';
+      previews.innerHTML = '';
+      return;
+    }
+    previews.style.display = 'flex';
+    previews.innerHTML = pendingImages.map((src, i) => `
+      <div style="position:relative">
+        <img src="${src}">
+        <span class="remove-thumb" data-i="${i}">×</span>
+      </div>
+    `).join('');
+  }
+  previews.addEventListener('click', e => {
+    if (e.target.classList.contains('remove-thumb')) {
+      pendingImages.splice(+e.target.dataset.i, 1);
+      renderPreviews();
+    }
+  });
+
+  stream.addEventListener('click', e => {
+    const row = e.target.closest('.bubble-row');
+    if (!row) return;
+    const id = row.dataset.id;
+    const action = e.target.dataset.action;
+    if (!action) return;
+    const memos = loadMemos();
+    const memo = memos.find(m => m.id === id);
+    if (!memo) return;
+    if (action === 'heart') memo.important = !memo.important;
+    else if (action === 'pin') memo.pinned = !memo.pinned;
+    else if (action === 'check') memo.checked = !memo.checked;
+    else if (action === 'reply') {
+      const r = prompt('답글:', memo.reply || '');
+      if (r !== null) memo.reply = r;
+    } else if (action === 'copy') {
+      navigator.clipboard.writeText(memo.text);
+      e.target.textContent = '✓';
+      setTimeout(() => e.target.textContent = '📋', 800);
+      return;
+    } else if (action === 'delete') {
+      if (!confirm('삭제할까요?')) return;
+      const idx = memos.findIndex(m => m.id === id);
+      memos.splice(idx, 1);
+      saveMemos(memos);
+      render();
+      return;
+    }
+    saveMemos(memos);
+    render();
+  });
+
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      activeFolder = tab.dataset.folder;
+      syncFolderSidebar();
+      render();
+    });
+  });
+  document.querySelectorAll('.folder-item').forEach(folder => {
+    folder.addEventListener('click', () => {
+      document.querySelectorAll('.folder-item').forEach(f => f.classList.remove('active'));
+      folder.classList.add('active');
+      activeFolder = folder.dataset.folder;
+      syncTabs();
+      render();
+    });
+  });
+  function syncFolderSidebar() {
+    document.querySelectorAll('.folder-item').forEach(f => {
+      f.classList.toggle('active', f.dataset.folder === activeFolder);
+    });
+  }
+  function syncTabs() {
+    document.querySelectorAll('.tab').forEach(t => {
+      t.classList.toggle('active', t.dataset.folder === activeFolder);
+    });
+  }
+
+  if (loadMemos().length === 0) {
+    saveMemos([
+      { id: 's1', text: '가계부에서 고정비 영역 빼두기', folder: 'TO DO', important: false, pinned: true, isTodo: true, checked: false, reply: '', images: [], createdAt: Date.now() - 600000 },
+      { id: 's2', text: '고정 메모는 여기에 표시된답니다 ✦✦ 항상 확인할 수 있어요~', folder: 'MEMO', important: false, pinned: false, isTodo: false, checked: false, reply: '', images: [], createdAt: Date.now() - 500000 },
+      { id: 's3', text: '바로바로 추가', folder: 'IDEA', important: false, pinned: false, isTodo: false, checked: false, reply: '', images: [], createdAt: Date.now() - 400000 },
+      { id: 's4', text: '이곳에서 고정 메모를 바로 추가하고 확인할 수 있어요!', folder: 'IDEA', important: true, pinned: false, isTodo: false, checked: false, reply: '', images: [], createdAt: Date.now() - 300000 },
+      { id: 's5', text: '온라인 메모 작성', folder: 'MEMO', important: false, pinned: false, isTodo: false, checked: false, reply: '', images: [], createdAt: Date.now() - 200000 },
+      { id: 's6', text: 'iframe 위젯 임베드 오류 해결 프롬프트 #1. 배포 헤더 확인 (가장 중요)', folder: 'PROMPT', important: false, pinned: false, isTodo: false, checked: false, reply: '', images: [], createdAt: Date.now() - 100000 },
+    ]);
+  }
+  render();
+</script>
+</body>
+</html>
