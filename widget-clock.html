@@ -10,87 +10,105 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 16px;
     background: transparent;
+    min-height: 100vh;
   }
   .clock-card {
-    width: 240px;
-    background: linear-gradient(180deg, #fff5f8 0%, #ffe4ec 100%);
-    border-radius: 24px;
-    padding: 16px 18px;
+    width: 100%;
+    max-width: 280px;
+    background: linear-gradient(165deg, #fffafc 0%, #fef0f5 60%, #fde2ec 100%);
+    border-radius: 22px;
+    padding: 16px 18px 18px;
     box-shadow:
-      0 8px 24px rgba(255, 143, 171, 0.20),
-      inset 0 0 0 1px #ffffff;
+      0 10px 24px rgba(255, 143, 171, 0.18),
+      inset 0 1px 0 #ffffff;
     position: relative;
+    border: 1px solid #fce0e9;
   }
   .clock-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 11px;
-    color: var(--pink-text);
-    margin-bottom: 10px;
+    margin-bottom: 12px;
+    font-family: var(--font-serif);
   }
   .clock-header .date {
+    font-size: 11px;
     font-weight: 600;
+    font-style: italic;
+    color: var(--pink-text);
+    letter-spacing: 0.05em;
   }
   .clock-header .dots {
-    letter-spacing: 1px;
-    color: var(--pink-mid);
+    letter-spacing: 2px;
+    color: var(--pink-300);
+    font-size: 10px;
   }
   .clock-display {
     background: #ffffff;
     background-image:
-      linear-gradient(90deg, transparent 49.5%, rgba(255,193,210,0.25) 49.5%, rgba(255,193,210,0.25) 50.5%, transparent 50.5%),
-      linear-gradient(0deg, transparent 49.5%, rgba(255,193,210,0.25) 49.5%, rgba(255,193,210,0.25) 50.5%, transparent 50.5%);
-    background-size: 8px 8px;
+      linear-gradient(90deg, transparent 49.7%, rgba(252, 208, 222, 0.28) 49.7%, rgba(252, 208, 222, 0.28) 50.3%, transparent 50.3%),
+      linear-gradient(0deg, transparent 49.7%, rgba(252, 208, 222, 0.28) 49.7%, rgba(252, 208, 222, 0.28) 50.3%, transparent 50.3%);
+    background-size: 10px 10px;
     border-radius: 14px;
-    padding: 14px 18px;
-    box-shadow: inset 0 2px 6px rgba(255, 143, 171, 0.12);
+    padding: 16px 14px;
+    box-shadow: inset 0 2px 5px rgba(252, 208, 222, 0.4);
     position: relative;
     display: flex;
     align-items: flex-end;
     justify-content: center;
-    gap: 4px;
+    gap: 6px;
     white-space: nowrap;
   }
   .clock-time {
-    font-family: "Courier New", "DigitalNumbers", monospace;
-    font-weight: 700;
-    font-size: 46px;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-weight: 800;
+    font-size: 52px;
     line-height: 1;
-    color: #2a2a2a;
+    color: #3a2a32;
     letter-spacing: -2px;
   }
   .clock-ampm {
-    font-family: "Courier New", monospace;
+    font-family: 'JetBrains Mono', monospace;
     font-weight: 700;
     font-size: 14px;
-    color: #2a2a2a;
+    color: #3a2a32;
     padding-bottom: 6px;
+    letter-spacing: 1px;
   }
   .clock-side {
     position: absolute;
-    right: -6px;
+    right: -7px;
     top: 50%;
     transform: translateY(-50%);
-    width: 12px;
-    height: 30px;
-    background: var(--pink-mid);
+    width: 14px;
+    height: 38px;
+    background: #fcd0de;
     border-radius: 4px;
+    box-shadow: inset -1px 0 0 rgba(0,0,0,0.05);
+  }
+  .clock-bottom {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 9px;
+    font-style: italic;
+    color: var(--text-soft);
+    letter-spacing: 0.06em;
   }
 </style>
 </head>
 <body>
   <div class="clock-card">
     <div class="clock-header">
-      <span class="date">♥ <span id="date">5.25 SUN</span></span>
+      <span class="date">♥ <span id="date">5.26 TUE</span></span>
       <span class="dots">···</span>
     </div>
     <div class="clock-display">
-      <span class="clock-time" id="time">05:08</span><span class="clock-ampm" id="ampm">PM</span>
+      <span class="clock-time" id="time">10:45</span><span class="clock-ampm" id="ampm">AM</span>
       <div class="clock-side"></div>
     </div>
+    <div class="clock-bottom">⋆⁺₊ ⋆ ☾ ⋆⁺₊ ⋆</div>
   </div>
 <script>
   function pad(n){return String(n).padStart(2,'0');}

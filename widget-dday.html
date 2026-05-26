@@ -8,108 +8,131 @@
 <style>
   body {
     display: flex;
-    align-items: flex-start;
     justify-content: center;
-    padding: 16px;
+    padding: 14px;
     background: transparent;
   }
   .dday-card {
-    width: 260px;
-    background: #fff5f8;
-    border: 1.5px solid var(--pink-mid);
-    border-radius: 14px;
-    padding: 12px 14px;
-    box-shadow: 0 4px 14px rgba(255, 143, 171, 0.15);
+    width: 100%;
+    max-width: 290px;
+    background: linear-gradient(180deg, #fffafc, #fef0f5);
+    border: 1px solid #fce0e9;
+    border-radius: 18px;
+    padding: 12px 14px 12px;
+    box-shadow: 0 6px 18px rgba(255, 143, 171, 0.14);
   }
   .dday-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    color: var(--pink-text);
-    font-size: 12px;
     margin-bottom: 10px;
-    font-weight: 600;
+    padding-bottom: 6px;
+    border-bottom: 1px dashed #fce0e9;
   }
-  .dday-list { display: flex; flex-direction: column; gap: 8px; }
-  .dday-item {
-    background: white;
-    border: 1px solid var(--pink-soft);
-    border-radius: 10px;
-    padding: 8px 10px;
+  .dday-title {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 12px;
+    color: var(--pink-text);
+    font-weight: 600;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 5px;
+  }
+  .dday-list { display: flex; flex-direction: column; gap: 6px; }
+  .dday-item {
+    background: #ffffff;
+    border: 1px solid #fce0e9;
+    border-radius: 10px;
+    padding: 7px 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
     font-size: 12px;
-    color: #5a4a52;
+    color: var(--text);
+    transition: transform 0.1s;
+  }
+  .dday-item:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(255, 143, 171, 0.15);
   }
   .dday-badge {
-    background: var(--pink-mid);
-    color: white;
+    background: var(--pink-100);
+    color: var(--pink-text);
     font-weight: 700;
-    border-radius: 8px;
-    padding: 3px 8px;
-    font-size: 11px;
+    border-radius: 6px;
+    padding: 3px 7px;
+    font-size: 10px;
     min-width: 38px;
     text-align: center;
+    letter-spacing: 0.04em;
   }
-  .dday-badge.urgent { background: #e8849b; }
-  .dot { color: var(--pink-accent); font-size: 8px; }
+  .dday-badge.urgent { background: #f599b3; color: #ffffff; }
+  .dday-badge.passed { background: #e5dbf2; color: #8a73a3; }
+  .dot { color: #f599b3; font-size: 7px; }
   .dday-add {
-    background: var(--pink-soft);
-    border: 1px dashed var(--pink-mid);
+    margin-top: 8px;
+    background: transparent;
+    border: 1px dashed #fcd0de;
+    border-radius: 10px;
+    padding: 7px;
     color: var(--pink-text);
-    font-size: 11px;
-    padding: 6px;
-    border-radius: 8px;
-    cursor: pointer;
-    text-align: center;
-    margin-top: 6px;
+    font-size: 10px;
     width: 100%;
+    text-align: center;
+    transition: background 0.15s;
   }
-  .dday-add:hover { background: var(--pink-mid); color: white; }
+  .dday-add:hover { background: #fef0f5; }
 </style>
 </head>
 <body>
   <div class="dday-card">
     <div class="dday-header">
-      <span>💕 Upcoming Events</span>
-      <span style="color: var(--pink-mid); font-weight: normal;">↻ ⌄</span>
+      <span class="dday-title">💕 upcoming events</span>
+      <span class="win-dots"><span></span><span></span><span></span></span>
     </div>
     <div class="dday-list" id="list"></div>
     <button class="dday-add" onclick="addEvent()">+ 새 이벤트</button>
   </div>
 <script>
 const KEY = 'memoos_dday';
-function load(){ try{return JSON.parse(localStorage.getItem(KEY)) || sample();}catch(e){return sample();} }
+function load(){
+  try { return JSON.parse(localStorage.getItem(KEY)) || seed(); }
+  catch(e) { return seed(); }
+}
 function save(items){ localStorage.setItem(KEY, JSON.stringify(items)); }
-function sample(){
+function seed(){
   const today = new Date();
   const t = (d) => { const n = new Date(today); n.setDate(n.getDate()+d); return n.toISOString().split('T')[0]; };
   return [
     { title: '수익 마감', date: t(7) },
     { title: '엠타트업 강의 업로드', date: t(14) },
+    { title: '브랜드 사진 촬영', date: t(21) },
   ];
 }
 function calcDay(dateStr){
   const target = new Date(dateStr);
   const today = new Date(); today.setHours(0,0,0,0);
-  const diff = Math.ceil((target - today) / (1000*60*60*24));
-  return diff;
+  return Math.ceil((target - today) / 86400000);
 }
 function render(){
   const items = load();
   const list = document.getElementById('list');
   list.innerHTML = '';
+  items.sort((a,b) => new Date(a.date) - new Date(b.date));
   items.forEach((it, idx) => {
     const d = calcDay(it.date);
-    const label = d === 0 ? 'D-day' : d > 0 ? 'D-' + d : 'D+' + Math.abs(d);
-    const urgent = d >= 0 && d <= 3;
+    let label, badgeClass = '';
+    if (d === 0) { label = 'D-day'; badgeClass = 'urgent'; }
+    else if (d > 0) { label = 'D-' + d; if (d <= 3) badgeClass = 'urgent'; }
+    else { label = 'D+' + Math.abs(d); badgeClass = 'passed'; }
     const row = document.createElement('div');
     row.className = 'dday-item';
-    row.innerHTML = `<span class="dday-badge ${urgent?'urgent':''}">${label}</span><span class="dot">●</span><span>${it.title}</span>`;
+    row.innerHTML = `<span class="dday-badge ${badgeClass}">${label}</span><span class="dot">●</span><span>${esc(it.title)}</span>`;
     list.appendChild(row);
   });
 }
+function esc(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function addEvent(){
   const t = prompt('이벤트 이름:'); if(!t) return;
   const d = prompt('날짜 (YYYY-MM-DD):'); if(!d) return;

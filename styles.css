@@ -1,21 +1,52 @@
-/* MEMO OS - Shared Pink Theme Styles */
+/* MEMO OS — Powder Pink Soft Theme (재설계 v2) */
 
 :root {
-  --pink-bg: #fff5f8;
-  --pink-soft: #ffe4ec;
-  --pink-mid: #ffd1dc;
-  --pink-accent: #ff8fab;
-  --pink-text: #e07097;
-  --peach: #ffe6d4;
-  --mint: #e0f5e0;
-  --cream: #fff8d4;
-  --blue: #d4e5f9;
-  --purple: #e8d8f9;
-  --gray: #f0f0f0;
+  /* 메인 톤: 거의 흰색에 가까운 파우더 핑크 */
+  --bg: #fffafc;
+  --pink-100: #fef0f5;
+  --pink-200: #fde2ec;
+  --pink-300: #fcd0de;
+  --pink-400: #f9b5c8;
+  --pink-500: #f599b3;
+  --pink-600: #e87a9a;
+  --pink-text: #c46485;
+
+  /* 파스텔 액센트 */
+  --peach: #ffe5d4;
+  --peach-300: #ffd2b8;
+  --mint: #d8efdc;
+  --mint-300: #b5e0bd;
+  --cream: #fff5d6;
+  --cream-300: #ffe896;
+  --sky: #d8e6f7;
+  --sky-300: #b8d0ec;
+  --lilac: #e5dbf2;
+  --lilac-300: #cabbe0;
+
+  /* 텍스트 */
   --text: #5a4a52;
-  --text-light: #a08894;
-  --border: #f5d8e2;
-  --shadow: 0 2px 8px rgba(255, 143, 171, 0.12);
+  --text-light: #b29ba6;
+  --text-soft: #d4c0c9;
+
+  /* 라인/그림자 */
+  --border: #fce0e9;
+  --border-soft: rgba(255, 182, 200, 0.25);
+  --shadow-xs: 0 1px 4px rgba(255, 143, 171, 0.06);
+  --shadow-sm: 0 2px 8px rgba(255, 143, 171, 0.10);
+  --shadow-md: 0 4px 16px rgba(255, 143, 171, 0.14);
+  --shadow-lg: 0 8px 24px rgba(255, 143, 171, 0.18);
+
+  /* 폰트 */
+  --font: 'Pretendard Variable', 'Pretendard', -apple-system, BlinkMacSystemFont,
+          'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif;
+  --font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+
+  /* 라운드 */
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 18px;
+  --r-xl: 24px;
 }
 
 * {
@@ -25,12 +56,12 @@
 }
 
 html, body {
-  font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Apple SD Gothic Neo",
-    "Segoe UI", system-ui, sans-serif;
-  font-size: 14px;
+  font-family: var(--font);
+  font-size: 13px;
   color: var(--text);
   background: transparent;
   -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.01em;
 }
 
 button {
@@ -39,6 +70,7 @@ button {
   border: none;
   background: none;
   color: inherit;
+  font-size: inherit;
 }
 
 input, textarea {
@@ -47,45 +79,62 @@ input, textarea {
   border: none;
   background: none;
   color: inherit;
+  font-size: inherit;
+}
+input::placeholder, textarea::placeholder {
+  color: var(--text-soft);
+  font-weight: 400;
 }
 
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
+::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-thumb {
-  background: var(--pink-mid);
+  background: var(--pink-300);
   border-radius: 3px;
 }
-::-webkit-scrollbar-track {
-  background: transparent;
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb:hover { background: var(--pink-400); }
+
+/* 공통 카드 셸 */
+.card-shell {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
 }
 
-.section-label {
-  font-style: italic;
-  font-size: 12px;
+/* 타이틀 칩 (위젯 헤더의 작은 핑크 칩) */
+.title-chip {
+  display: inline-block;
+  background: var(--pink-100);
   color: var(--pink-text);
-  text-align: center;
-  margin: 8px 0 12px;
+  font-size: 10px;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-weight: 600;
   letter-spacing: 0.04em;
 }
-.section-label::before {
-  content: "";
-  display: inline-block;
-  width: 24px;
-  height: 8px;
-  background: var(--pink-soft);
-  border-radius: 4px;
-  margin-right: 8px;
-  vertical-align: middle;
+
+/* 윈도우 컨트롤 도트 (헬로키티 위젯 헤더 느낌) */
+.win-dots { display: flex; gap: 5px; }
+.win-dots span {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--pink-200);
 }
-.section-label::after {
-  content: "";
-  display: inline-block;
-  width: 24px;
-  height: 8px;
-  background: var(--pink-soft);
-  border-radius: 4px;
-  margin-left: 8px;
-  vertical-align: middle;
+.win-dots span:nth-child(2) { background: var(--peach); }
+.win-dots span:nth-child(3) { background: var(--mint); }
+
+/* 하트 아이콘 */
+.heart { color: var(--pink-400); }
+.heart-sm { font-size: 9px; color: var(--pink-300); }
+
+/* 페이지 풋터 */
+.footer-tag {
+  text-align: center;
+  font-size: 9px;
+  font-style: italic;
+  color: var(--text-soft);
+  margin-top: 8px;
+  letter-spacing: 0.05em;
 }

@@ -8,47 +8,53 @@
 <style>
   body {
     display: flex;
-    align-items: flex-start;
     justify-content: center;
-    padding: 16px;
+    padding: 14px;
     background: transparent;
   }
   .cal-card {
-    width: 280px;
-    background: #fff5f8;
+    width: 100%;
+    max-width: 290px;
+    background: linear-gradient(180deg, #fffafc, #fef0f5);
+    border: 1px solid #fce0e9;
     border-radius: 18px;
-    padding: 14px 16px 18px;
-    box-shadow: 0 4px 16px rgba(255, 143, 171, 0.18);
-    border: 1px solid #ffd1dc;
-    font-family: -apple-system, "Pretendard", sans-serif;
+    padding: 14px 16px 14px;
+    box-shadow: 0 6px 18px rgba(255, 143, 171, 0.14);
   }
   .cal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 6px;
+  }
+  .cal-header .label {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 12px;
     color: var(--pink-text);
-    font-size: 11px;
-    margin-bottom: 8px;
+    font-weight: 600;
   }
   .cal-title {
     text-align: center;
-    font-weight: 600;
-    font-size: 15px;
-    color: #5a4a52;
-    margin-bottom: 10px;
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--text);
+    margin: 6px 0 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
+    gap: 16px;
+    font-family: var(--font-serif);
   }
   .cal-nav {
     cursor: pointer;
-    color: var(--pink-mid);
-    font-size: 12px;
+    color: #fcd0de;
+    font-size: 13px;
     padding: 2px 6px;
     border-radius: 4px;
+    transition: color 0.15s;
   }
-  .cal-nav:hover { background: var(--pink-soft); color: var(--pink-text); }
+  .cal-nav:hover { color: var(--pink-text); }
   .cal-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -58,21 +64,28 @@
   }
   .cal-grid .dow {
     color: var(--pink-text);
-    font-weight: 600;
-    padding: 4px 0;
-    font-size: 10px;
+    font-weight: 700;
+    padding: 6px 0 8px;
+    font-size: 9px;
+    font-family: var(--font-serif);
+    letter-spacing: 0.05em;
   }
   .cal-grid .day {
     padding: 6px 0;
-    color: #5a4a52;
+    color: var(--text);
     border-radius: 50%;
     cursor: default;
+    width: 28px;
+    height: 28px;
+    line-height: 16px;
+    margin: 0 auto;
   }
-  .cal-grid .other { color: #d8b8c4; }
+  .cal-grid .other { color: var(--text-soft); }
   .cal-grid .today {
-    background: var(--pink-mid);
-    color: white;
+    background: #fcd0de;
+    color: #ffffff;
     font-weight: 700;
+    box-shadow: 0 2px 6px rgba(252, 208, 222, 0.5);
   }
   .cal-grid .sat { color: #87a8d8; }
   .cal-grid .sun { color: #e8849b; }
@@ -80,18 +93,21 @@
   .cal-grid .other.sun { color: #efc9d2; }
   .cal-footer {
     text-align: center;
-    margin-top: 10px;
+    margin-top: 12px;
     font-size: 9px;
-    color: var(--text-light);
+    color: var(--text-soft);
     font-style: italic;
+    letter-spacing: 0.06em;
+    padding-top: 6px;
+    border-top: 1px dashed #fce0e9;
   }
 </style>
 </head>
 <body>
   <div class="cal-card">
     <div class="cal-header">
-      <span>📅 calendar</span>
-      <span>···</span>
+      <span class="label">📅 calendar</span>
+      <span class="win-dots"><span></span><span></span><span></span></span>
     </div>
     <div class="cal-title">
       <span class="cal-nav" onclick="navMonth(-1)">‹</span>
@@ -99,7 +115,7 @@
       <span class="cal-nav" onclick="navMonth(1)">›</span>
     </div>
     <div class="cal-grid" id="grid"></div>
-    <div class="cal-footer">SOMLUTION ♥</div>
+    <div class="cal-footer">⋆⁺₊ ⋆ SOMLUTION ⋆⁺₊ ⋆</div>
   </div>
 <script>
 const DOW = ['Mo','Tu','We','Th','Fr','Sa','Su'];
@@ -109,8 +125,7 @@ function render(){
   const m = view.getMonth();
   document.getElementById('title').textContent = y + '.' + String(m+1).padStart(2,'0');
   const today = new Date();
-  const firstOfMonth = new Date(y, m, 1);
-  const startDow = (firstOfMonth.getDay() + 6) % 7; // Mon=0
+  const startDow = (new Date(y, m, 1).getDay() + 6) % 7;
   const daysInMonth = new Date(y, m+1, 0).getDate();
   const prevDays = new Date(y, m, 0).getDate();
   const grid = document.getElementById('grid');

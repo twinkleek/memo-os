@@ -8,113 +8,121 @@
 <style>
   body {
     display: flex;
-    align-items: flex-start;
     justify-content: center;
-    padding: 16px;
+    padding: 14px;
     background: transparent;
   }
   .todo-card {
-    width: 280px;
-    background: #fff5f8;
-    border: 1.5px solid var(--pink-mid);
-    border-radius: 14px;
-    padding: 0;
+    width: 100%;
+    max-width: 290px;
+    background: linear-gradient(180deg, #fffafc, #fef0f5);
+    border: 1px solid #fce0e9;
+    border-radius: 18px;
     overflow: hidden;
-    box-shadow: 0 4px 14px rgba(255, 143, 171, 0.15);
+    box-shadow: 0 6px 18px rgba(255, 143, 171, 0.14);
   }
   .todo-header {
-    background: var(--pink-soft);
-    padding: 8px 12px;
-    font-size: 11px;
-    color: var(--pink-text);
-    font-weight: 600;
+    background: var(--pink-100);
+    padding: 8px 14px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid var(--pink-mid);
+    border-bottom: 1px solid #fce0e9;
   }
-  .todo-dots { display: flex; gap: 4px; }
-  .todo-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--pink-mid); opacity: 0.5; }
+  .todo-title {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 12px;
+    color: var(--pink-text);
+    font-weight: 600;
+  }
   .todo-input {
     display: flex;
-    padding: 8px;
+    padding: 8px 10px;
     gap: 6px;
-    background: white;
-    border-bottom: 1px solid var(--pink-soft);
+    background: #ffffff;
+    border-bottom: 1px solid #fef0f5;
   }
   .todo-input input {
     flex: 1;
-    background: var(--pink-soft);
-    border-radius: 8px;
-    padding: 6px 10px;
+    background: var(--pink-100);
+    border-radius: 10px;
+    padding: 7px 12px;
     font-size: 12px;
-    color: #5a4a52;
+    color: var(--text);
   }
-  .todo-input input::placeholder { color: var(--text-light); }
   .todo-input button {
-    background: var(--pink-mid);
-    color: white;
-    border-radius: 6px;
+    background: #fcd0de;
+    color: #ffffff;
+    border-radius: 8px;
     width: 28px;
     height: 28px;
-    font-size: 14px;
-    font-weight: bold;
+    font-size: 15px;
+    font-weight: 700;
   }
+  .todo-input button:hover { background: #f599b3; }
   .todo-list {
-    padding: 8px 0;
-    max-height: 240px;
+    padding: 6px 0;
+    max-height: 320px;
     overflow-y: auto;
-    background: white;
+    background: #ffffff;
   }
   .todo-item {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 7px 12px;
+    gap: 9px;
+    padding: 8px 14px;
     font-size: 12px;
-    color: #5a4a52;
-    border-bottom: 1px solid #fef0f4;
+    color: var(--text);
+    border-bottom: 1px solid #fef0f5;
+    transition: background 0.1s;
   }
+  .todo-item:hover { background: #fffafc; }
   .todo-item:last-child { border: none; }
   .todo-item input[type="checkbox"] {
     appearance: none;
     width: 14px;
     height: 14px;
-    border: 1.5px solid var(--pink-mid);
-    border-radius: 3px;
+    border: 1.5px solid #fcd0de;
+    border-radius: 4px;
     cursor: pointer;
     flex-shrink: 0;
     position: relative;
   }
   .todo-item input[type="checkbox"]:checked {
-    background: var(--pink-mid);
+    background: #fcd0de;
+    border-color: #fcd0de;
   }
   .todo-item input[type="checkbox"]:checked::after {
     content: '✓';
     position: absolute;
-    color: white;
+    color: #ffffff;
     font-size: 10px;
+    font-weight: 700;
     top: -2px;
     left: 2px;
   }
-  .todo-item.done span { text-decoration: line-through; color: var(--text-light); }
-  .todo-item .text { flex: 1; }
+  .todo-item.done .text { text-decoration: line-through; color: var(--text-soft); }
+  .todo-item .text { flex: 1; line-height: 1.4; }
+  .todo-heart { color: var(--pink-300); font-size: 10px; cursor: pointer; opacity: 0.5; transition: all 0.15s; }
+  .todo-heart.active { opacity: 1; color: #f599b3; }
+  .todo-heart:hover { transform: scale(1.2); }
   .todo-item .del {
-    color: var(--pink-mid);
+    color: var(--text-soft);
     font-size: 11px;
     cursor: pointer;
     opacity: 0;
-    transition: opacity 0.2s;
+    transition: all 0.15s;
   }
   .todo-item:hover .del { opacity: 1; }
-  .todo-heart { color: var(--pink-mid); font-size: 10px; cursor: pointer; }
+  .todo-item .del:hover { color: #f599b3; }
 </style>
 </head>
 <body>
   <div class="todo-card">
     <div class="todo-header">
-      <span>📋 to do list</span>
-      <div class="todo-dots"><div class="todo-dot"></div><div class="todo-dot"></div><div class="todo-dot"></div></div>
+      <span class="todo-title">📋 to do list</span>
+      <span class="win-dots"><span></span><span></span><span></span></span>
     </div>
     <div class="todo-input">
       <input id="inp" placeholder="할 일 추가..." onkeydown="if(event.key==='Enter')add()">
@@ -124,36 +132,37 @@
   </div>
 <script>
 const KEY = 'memoos_todo';
-function load(){ try{return JSON.parse(localStorage.getItem(KEY)) || sample();}catch(e){return sample();} }
-function save(items){ localStorage.setItem(KEY, JSON.stringify(items)); }
-function sample(){ return [
-  {t:'SNS 사진 업로드', d:false},
-  {t:'다이어트 식단 인증', d:false},
-  {t:'줌인스킨 채널 분석', d:true},
+function load(){
+  try { return JSON.parse(localStorage.getItem(KEY)) || seed(); }
+  catch(e) { return seed(); }
+}
+function save(arr){ localStorage.setItem(KEY, JSON.stringify(arr)); }
+function seed(){ return [
+  {t:'SNS 사진 업로드', d:false, h:false},
+  {t:'다이어트 식단 인증', d:false, h:true},
+  {t:'줌인스킨 채널 분석', d:true, h:false},
+  {t:'엠타트업 강의 편집', d:false, h:false},
 ];}
 function render(){
-  const items = load();
   const list = document.getElementById('list');
   list.innerHTML = '';
-  items.forEach((it, i) => {
+  load().forEach((it, i) => {
     const row = document.createElement('div');
     row.className = 'todo-item' + (it.d ? ' done' : '');
-    row.innerHTML = `<input type="checkbox" ${it.d?'checked':''} data-i="${i}"><span class="text">${it.t}</span><span class="todo-heart">♡</span><span class="del" data-i="${i}">×</span>`;
+    row.innerHTML = `<input type="checkbox" ${it.d?'checked':''}><span class="text">${esc(it.t)}</span><span class="todo-heart${it.h?' active':''}" title="중요">♡</span><span class="del" title="삭제">×</span>`;
+    row.querySelector('input').onchange = (e) => { const arr = load(); arr[i].d = e.target.checked; save(arr); render(); };
+    row.querySelector('.todo-heart').onclick = () => { const arr = load(); arr[i].h = !arr[i].h; save(arr); render(); };
+    row.querySelector('.del').onclick = () => { const arr = load(); arr.splice(i, 1); save(arr); render(); };
     list.appendChild(row);
   });
-  list.querySelectorAll('input[type="checkbox"]').forEach(c => {
-    c.onchange = () => { const items = load(); items[c.dataset.i].d = c.checked; save(items); render(); };
-  });
-  list.querySelectorAll('.del').forEach(d => {
-    d.onclick = () => { const items = load(); items.splice(d.dataset.i, 1); save(items); render(); };
-  });
 }
+function esc(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function add(){
   const inp = document.getElementById('inp');
   if(!inp.value.trim()) return;
-  const items = load();
-  items.push({t: inp.value.trim(), d: false});
-  save(items);
+  const arr = load();
+  arr.push({t: inp.value.trim(), d: false, h: false});
+  save(arr);
   inp.value = '';
   render();
 }

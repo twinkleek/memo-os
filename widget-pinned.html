@@ -7,255 +7,153 @@
 <link rel="stylesheet" href="styles.css">
 <style>
   body {
+    padding: 12px;
     background: transparent;
-    padding: 14px;
     display: flex;
     justify-content: center;
   }
-  .pinned-widget {
-    width: 100%;
-    max-width: 280px;
-    background: #fff5f8;
-    border: 1.5px solid #ffd1dc;
-    border-radius: 16px;
-    padding: 12px 10px;
-    max-height: 600px;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 6px 24px rgba(255, 143, 171, 0.16);
-    position: relative;
-  }
-  .pinned-list {
-    flex: 1;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 9px;
-    padding: 4px 4px 8px;
-  }
   .pin-card {
-    border-radius: 12px;
-    padding: 9px 12px 11px;
-    font-size: 12.5px;
-    color: var(--text);
-    line-height: 1.5;
-    position: relative;
-    box-shadow: 0 1px 3px rgba(255, 143, 171, 0.10);
-    word-break: break-word;
-    cursor: text;
-    transition: transform 0.15s;
-  }
-  .pin-card:hover { transform: translateX(2px); }
-  .pin-card .heart {
-    color: var(--pink-accent);
-    font-size: 10px;
-    margin-bottom: 2px;
-    display: block;
-  }
-  .pin-card[data-color="pink"] { background: #ffe4ec; }
-  .pin-card[data-color="peach"] { background: #ffe6d4; }
-  .pin-card[data-color="mint"] { background: #e0f5e0; }
-  .pin-card[data-color="cream"] { background: #fff8d4; }
-  .pin-card[data-color="blue"] { background: #d4e5f9; }
-  .pin-card[data-color="purple"] { background: #e8d8f9; }
-  .pin-text {
-    outline: none;
-    min-height: 18px;
-  }
-  .pin-text.empty::before {
-    content: "메모를 입력하세요...";
-    color: var(--text-light);
-    opacity: 0.5;
-  }
-  .pin-actions {
-    position: absolute;
-    top: 6px;
-    right: 6px;
-    display: none;
-    gap: 4px;
-    background: rgba(255,255,255,0.85);
-    padding: 3px 5px;
-    border-radius: 8px;
-  }
-  .pin-card:hover .pin-actions { display: flex; }
-  .pin-actions button {
-    font-size: 10px;
-    color: var(--text-light);
-    padding: 0;
-  }
-  .pin-actions button:hover { color: var(--pink-accent); }
-  .pin-card.todo .pin-checkbox {
-    display: inline-block;
-    width: 11px;
-    height: 11px;
-    border: 1.5px solid var(--text-light);
-    border-radius: 2px;
-    vertical-align: middle;
-    margin-right: 6px;
-    cursor: pointer;
-  }
-  .pin-card.todo.checked .pin-text { text-decoration: line-through; opacity: 0.5; }
-  .pin-card.todo.checked .pin-checkbox {
-    background: var(--pink-accent);
-    border-color: var(--pink-accent);
-    position: relative;
-  }
-  .pin-card.todo.checked .pin-checkbox::after {
-    content: "✓";
-    color: white;
-    font-size: 8px;
-    position: absolute;
-    top: -4px;
-    left: 1px;
-  }
-  .add-btn {
-    background: white;
-    border: 1px dashed #ffd1dc;
-    border-radius: 10px;
-    padding: 6px;
-    font-size: 16px;
-    color: var(--pink-mid);
-    cursor: pointer;
-    margin: 6px 4px 0;
-    transition: all 0.15s;
-  }
-  .add-btn:hover {
-    background: var(--pink-soft);
-    color: var(--pink-accent);
-  }
-  .top-controls {
+    width: 100%;
+    max-width: 290px;
+    background: linear-gradient(180deg, #fffafc, #fef0f5);
+    border: 1px solid #fce0e9;
+    border-radius: 18px;
+    padding: 12px 12px 8px;
+    box-shadow: 0 6px 18px rgba(255, 143, 171, 0.14);
     display: flex;
-    justify-content: flex-end;
-    padding: 0 4px 6px;
-    color: var(--pink-mid);
-    font-size: 14px;
+    flex-direction: column;
+    gap: 8px;
   }
-  .top-controls span { cursor: pointer; padding: 0 4px; }
+  .pin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 4px 6px;
+    border-bottom: 1px dashed #fce0e9;
+  }
+  .pin-title {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 13px;
+    color: var(--pink-text);
+    font-weight: 600;
+  }
+  .pin-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 520px;
+    overflow-y: auto;
+    padding: 2px;
+  }
+  .pin-card-item {
+    background: var(--pink-100);
+    border-radius: 10px;
+    padding: 9px 11px;
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: var(--text);
+    position: relative;
+    transition: transform 0.15s;
+    cursor: default;
+  }
+  .pin-card-item:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(255, 143, 171, 0.15);
+  }
+  .pin-card-item .h {
+    display: block;
+    color: #fcd0de;
+    font-size: 9px;
+    margin-bottom: 3px;
+    letter-spacing: 0.08em;
+  }
+  .pin-card-item .x {
+    position: absolute;
+    top: 4px;
+    right: 6px;
+    color: var(--text-soft);
+    font-size: 11px;
+    opacity: 0;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .pin-card-item:hover .x { opacity: 1; }
+  .pin-card-item .x:hover { color: #f599b3; }
+
+  .c-pink { background: #fde2ec; }
+  .c-peach { background: #ffe5d4; }
+  .c-mint { background: #d8efdc; }
+  .c-cream { background: #fff5d6; }
+  .c-sky { background: #d8e6f7; }
+  .c-lilac { background: #e5dbf2; }
+
+  .pin-add {
+    margin: 4px 2px 0;
+    background: transparent;
+    border: 1px dashed #fcd0de;
+    border-radius: 10px;
+    padding: 8px;
+    color: var(--pink-text);
+    font-size: 11px;
+    cursor: pointer;
+    text-align: center;
+    transition: background 0.15s;
+  }
+  .pin-add:hover { background: #fef0f5; }
 </style>
 </head>
 <body>
-<div class="pinned-widget">
-  <div class="top-controls"><span>···</span></div>
-  <div class="pinned-list" id="pinList"></div>
-  <button class="add-btn" id="addBtn">＋</button>
-</div>
-<script src="api.js"></script>
+  <div class="pin-card">
+    <div class="pin-header">
+      <span class="pin-title">📌 pinned memo</span>
+      <span class="win-dots"><span></span><span></span><span></span></span>
+    </div>
+    <div class="pin-list" id="list"></div>
+    <button class="pin-add" onclick="add()">+ new pinned</button>
+  </div>
 <script>
-  const STORE_KEY = 'memoOS.pinned';
-  const COLORS = ['pink','peach','mint','cream','blue','purple'];
-  const list = document.getElementById('pinList');
-
-  function load() {
-    try { return JSON.parse(localStorage.getItem(STORE_KEY) || '[]'); }
-    catch { return []; }
-  }
-  function save(memos) {
-    localStorage.setItem(STORE_KEY, JSON.stringify(memos));
-  }
-  function escapeHtml(s) {
-    return String(s).replace(/[&<>"']/g, c => ({
-      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-    })[c]);
-  }
-
-  function render() {
-    const memos = load();
-    list.innerHTML = memos.map(m => `
-      <div class="pin-card ${m.isTodo?'todo':''} ${m.checked?'checked':''}" data-color="${m.color}" data-id="${m.id}">
-        <span class="heart">♡</span>
-        <div class="pin-actions">
-          <button data-action="todo" title="할 일 토글">${m.isTodo?'✓':'☐'}</button>
-          <button data-action="color" title="색상">🎨</button>
-          <button data-action="copy" title="복사">📋</button>
-          <button data-action="unpin" title="고정해제">📌</button>
-          <button data-action="delete" title="삭제">🗑</button>
-        </div>
-        ${m.isTodo ? '<span class="pin-checkbox" data-action="check"></span>' : ''}<span class="pin-text ${m.text?'':'empty'}" contenteditable="true" data-id="${m.id}">${escapeHtml(m.text)}</span>
-      </div>
-    `).join('');
-  }
-
-  function addNew(opts = {}) {
-    const memos = load();
-    const color = opts.color || COLORS[memos.length % COLORS.length];
-    const newMemo = {
-      id: Date.now() + '_' + Math.random().toString(36).slice(2,7),
-      text: opts.text || '',
-      color,
-      isTodo: opts.isTodo || false,
-      checked: false,
-      createdAt: Date.now()
+const KEY = 'memoos_pinned';
+const COLORS = ['c-pink','c-peach','c-mint','c-cream','c-sky','c-lilac'];
+function load(){
+  try { return JSON.parse(localStorage.getItem(KEY)) || seed(); }
+  catch(e) { return seed(); }
+}
+function save(arr){ localStorage.setItem(KEY, JSON.stringify(arr)); }
+function seed(){
+  return [
+    {t:'고정 메모는 여기에 적어보아요 ㅎㅎ', c:'c-peach'},
+    {t:'☐ 왓차 구독 해제', c:'c-mint'},
+    {t:'☐ 임대차계약서 사본 준비', c:'c-pink'},
+    {t:'☐ 유튜브에 롤링크레딧 링크 추가', c:'c-cream'},
+    {t:'☐ 세금 신고', c:'c-peach'},
+    {t:'<크티> ctee.kr/place/somlution', c:'c-sky'},
+    {t:'threads.com/@solutionsam_', c:'c-mint'},
+    {t:'가계부에서 고정비 영역 빼두기', c:'c-lilac'},
+  ];
+}
+function render(){
+  const list = document.getElementById('list');
+  list.innerHTML = '';
+  load().forEach((it, idx) => {
+    const el = document.createElement('div');
+    el.className = 'pin-card-item ' + (it.c || COLORS[idx % COLORS.length]);
+    el.innerHTML = '<span class="h">♡</span>' + esc(it.t) + '<span class="x" title="삭제">×</span>';
+    el.querySelector('.x').onclick = (e) => {
+      e.stopPropagation();
+      const arr = load(); arr.splice(idx, 1); save(arr); render();
     };
-    memos.push(newMemo);
-    save(memos);
-    render();
-    setTimeout(() => {
-      const node = list.querySelector(`[data-id="${newMemo.id}"] .pin-text`);
-      if (node) node.focus();
-    }, 30);
-  }
-
-  document.getElementById('addBtn').addEventListener('click', () => addNew());
-
-  list.addEventListener('click', e => {
-    const action = e.target.dataset.action;
-    const card = e.target.closest('.pin-card');
-    if (!card || !action) return;
-    const id = card.dataset.id;
-    const memos = load();
-    const memo = memos.find(m => m.id === id);
-    if (!memo) return;
-    if (action === 'check') memo.checked = !memo.checked;
-    else if (action === 'todo') memo.isTodo = !memo.isTodo;
-    else if (action === 'color') {
-      const i = COLORS.indexOf(memo.color);
-      memo.color = COLORS[(i+1) % COLORS.length];
-    } else if (action === 'copy') {
-      navigator.clipboard.writeText(memo.text);
-      e.target.textContent = '✓';
-      setTimeout(() => e.target.textContent = '📋', 800);
-      return;
-    } else if (action === 'unpin' || action === 'delete') {
-      if (action === 'delete' && !confirm('삭제할까요?')) return;
-      const idx = memos.findIndex(m => m.id === id);
-      memos.splice(idx, 1);
-      save(memos);
-      render();
-      return;
-    }
-    save(memos);
-    render();
+    list.appendChild(el);
   });
-
-  list.addEventListener('input', e => {
-    if (!e.target.classList.contains('pin-text')) return;
-    const id = e.target.dataset.id;
-    const memos = load();
-    const memo = memos.find(m => m.id === id);
-    if (memo) {
-      memo.text = e.target.textContent;
-      save(memos);
-      e.target.classList.toggle('empty', !memo.text);
-    }
-  });
-  list.addEventListener('blur', e => {
-    if (e.target.classList.contains('pin-text')) {
-      e.target.classList.toggle('empty', !e.target.textContent.trim());
-    }
-  }, true);
-
-  if (load().length === 0) {
-    save([
-      { id: 'p1', text: '유튜브에 롤링크레딧 링크 추가', color: 'pink', isTodo: true, checked: false, createdAt: Date.now()-700000 },
-      { id: 'p2', text: '세금 신고', color: 'peach', isTodo: true, checked: false, createdAt: Date.now()-600000 },
-      { id: 'p3', text: '떡볶이 여전히 시프트 안터 안 먹히는데...', color: 'mint', isTodo: false, checked: false, createdAt: Date.now()-500000 },
-      { id: 'p4', text: '인스타 위챗 이미지 액박 해결', color: 'pink', isTodo: true, checked: false, createdAt: Date.now()-400000 },
-      { id: 'p5', text: '<크티> https://ctee.kr/place/somlution_notion/store', color: 'blue', isTodo: false, checked: false, createdAt: Date.now()-300000 },
-      { id: 'p6', text: 'https://www.threads.com/@solutionsam_', color: 'mint', isTodo: false, checked: false, createdAt: Date.now()-200000 },
-      { id: 'p7', text: '가계부에서 고정비 영역 빼두기', color: 'purple', isTodo: false, checked: false, createdAt: Date.now()-100000 },
-    ]);
-  }
-  render();
+}
+function esc(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function add(){
+  const t = prompt('새 고정 메모:'); if(!t) return;
+  const arr = load();
+  arr.unshift({t, c: COLORS[Math.floor(Math.random()*COLORS.length)]});
+  save(arr); render();
+}
+render();
 </script>
 </body>
 </html>
