@@ -6,15 +6,21 @@
 <title>MEMO OS · To-do</title>
 <link rel="stylesheet" href="styles.css">
 <style>
+  html, body { margin: 0; height: 100%; }
   body {
     display: flex;
     justify-content: center;
-    padding: 14px;
+    align-items: flex-start;
+    padding: 8px;
     background: transparent;
   }
   .todo-card {
     width: 100%;
-    max-width: 290px;
+    max-width: 320px;
+    height: calc(100vh - 16px);
+    max-height: 480px;
+    display: flex;
+    flex-direction: column;
     background: linear-gradient(180deg, #fffafc, #fef0f5);
     border: 1px solid #fce0e9;
     border-radius: 18px;
@@ -63,7 +69,8 @@
   .todo-input button:hover { background: #f599b3; }
   .todo-list {
     padding: 6px 0;
-    max-height: 320px;
+    flex: 1;
+    min-height: 0;
     overflow-y: auto;
     background: #ffffff;
   }
