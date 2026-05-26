@@ -4,120 +4,152 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>MEMO OS · Calendar</title>
-<link rel="stylesheet" href="styles.css">
 <style>
-  html, body { margin: 0; height: 100%; }
+  :root {
+    --pink-text: #dc7494;
+    --pink-soft: #fce0e9;
+    --pink-light: #fef0f5;
+    --pink-mid: #fcd0de;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
   body {
+    background: transparent;
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    padding: 8px;
-    background: transparent;
+    padding: 10px;
+    font-family: -apple-system, 'Pretendard', system-ui, sans-serif;
   }
   .cal-card {
     width: 100%;
-    max-width: 320px;
-    background: linear-gradient(180deg, #fffafc, #fef0f5);
-    border: 1px solid #fce0e9;
-    border-radius: 18px;
-    padding: 14px 16px 14px;
-    box-shadow: 0 6px 18px rgba(255, 143, 171, 0.14);
+    max-width: 270px;
+    background: #ffffff;
+    border: 1.5px solid var(--pink-mid);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 14px rgba(252, 208, 222, 0.25);
   }
-  .cal-header {
+  .cal-topbar {
+    background: var(--pink-light);
+    padding: 6px 12px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 6px;
+    border-bottom: 1px solid var(--pink-soft);
+    font-size: 10px;
   }
-  .cal-header .label {
-    font-family: var(--font-serif);
-    font-style: italic;
-    font-size: 12px;
+  .cal-topbar .label {
     color: var(--pink-text);
     font-weight: 600;
+    font-style: italic;
+    font-family: Georgia, serif;
   }
+  .cal-topbar .ctrl {
+    display: flex;
+    gap: 7px;
+    color: #d8b8c4;
+  }
+  .cal-body { padding: 8px 10px 10px; }
   .cal-title {
     text-align: center;
-    font-weight: 700;
-    font-size: 17px;
-    color: var(--text);
-    margin: 6px 0 10px;
+    font-weight: 600;
+    font-size: 14px;
+    color: #5a4a52;
+    margin-bottom: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 16px;
-    font-family: var(--font-serif);
+    font-family: Georgia, serif;
   }
   .cal-nav {
     cursor: pointer;
-    color: #fcd0de;
-    font-size: 13px;
-    padding: 2px 6px;
-    border-radius: 4px;
-    transition: color 0.15s;
+    color: var(--pink-mid);
+    font-size: 14px;
+    padding: 0 4px;
   }
   .cal-nav:hover { color: var(--pink-text); }
   .cal-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 2px;
-    font-size: 11px;
+    gap: 0;
+    font-size: 10px;
     text-align: center;
   }
   .cal-grid .dow {
     color: var(--pink-text);
     font-weight: 700;
-    padding: 6px 0 8px;
+    padding: 4px 0 6px;
     font-size: 9px;
-    font-family: var(--font-serif);
-    letter-spacing: 0.05em;
+    font-family: Georgia, serif;
+    letter-spacing: 0;
   }
   .cal-grid .day {
-    padding: 6px 0;
-    color: var(--text);
-    border-radius: 50%;
+    padding: 4px 0;
+    color: #5a4a52;
     cursor: default;
-    width: 28px;
-    height: 28px;
-    line-height: 16px;
-    margin: 0 auto;
+    line-height: 1.3;
+    position: relative;
+    font-size: 10.5px;
   }
-  .cal-grid .other { color: var(--text-soft); }
+  .cal-grid .other { color: #d8c0c9; }
+  .cal-grid .past { color: #c8b3bc; text-decoration: line-through; text-decoration-color: #e8d0d8; }
   .cal-grid .today {
-    background: #fcd0de;
+    position: relative;
     color: #ffffff;
     font-weight: 700;
-    box-shadow: 0 2px 6px rgba(252, 208, 222, 0.5);
+  }
+  .cal-grid .today::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 18px;
+    height: 18px;
+    background: #f599b3;
+    border-radius: 50%;
+    z-index: -1;
+  }
+  .cal-grid .today { z-index: 1; }
+  .cal-grid .day-wrap {
+    position: relative;
+    display: inline-block;
+    width: 100%;
   }
   .cal-grid .sat { color: #87a8d8; }
   .cal-grid .sun { color: #e8849b; }
   .cal-grid .other.sat { color: #c5d4e8; }
   .cal-grid .other.sun { color: #efc9d2; }
+  .cal-grid .past.sat { color: #c5d4e8; }
+  .cal-grid .past.sun { color: #efc9d2; }
   .cal-footer {
     text-align: center;
-    margin-top: 12px;
-    font-size: 9px;
-    color: var(--text-soft);
+    padding: 8px 0 4px;
+    font-size: 8px;
+    color: #c8b3bc;
+    letter-spacing: 0.15em;
+    font-family: Georgia, serif;
     font-style: italic;
-    letter-spacing: 0.06em;
-    padding-top: 6px;
-    border-top: 1px dashed #fce0e9;
   }
 </style>
 </head>
 <body>
   <div class="cal-card">
-    <div class="cal-header">
+    <div class="cal-topbar">
       <span class="label">📅 calendar</span>
-      <span class="win-dots"><span></span><span></span><span></span></span>
+      <span class="ctrl">⤡ — ▢ ×</span>
     </div>
-    <div class="cal-title">
-      <span class="cal-nav" onclick="navMonth(-1)">‹</span>
-      <span id="title">2026.05</span>
-      <span class="cal-nav" onclick="navMonth(1)">›</span>
+    <div class="cal-body">
+      <div class="cal-title">
+        <span class="cal-nav" onclick="navMonth(-1)">‹</span>
+        <span id="title">2026.05</span>
+        <span class="cal-nav" onclick="navMonth(1)">›</span>
+      </div>
+      <div class="cal-grid" id="grid"></div>
+      <div class="cal-footer">SOMLUTION ♡</div>
     </div>
-    <div class="cal-grid" id="grid"></div>
-    <div class="cal-footer">⋆⁺₊ ⋆ SOMLUTION ⋆⁺₊ ⋆</div>
   </div>
 <script>
 const DOW = ['Mo','Tu','We','Th','Fr','Sa','Su'];
@@ -126,7 +158,8 @@ function render(){
   const y = view.getFullYear();
   const m = view.getMonth();
   document.getElementById('title').textContent = y + '.' + String(m+1).padStart(2,'0');
-  const today = new Date();
+  const today = new Date(); today.setHours(0,0,0,0);
+  const isCurrentMonth = today.getFullYear() === y && today.getMonth() === m;
   const startDow = (new Date(y, m, 1).getDay() + 6) % 7;
   const daysInMonth = new Date(y, m+1, 0).getDate();
   const prevDays = new Date(y, m, 0).getDate();
@@ -147,13 +180,16 @@ function render(){
     grid.appendChild(el);
   }
   for (let d = 1; d <= daysInMonth; d++) {
+    const cellDate = new Date(y, m, d);
     const el = document.createElement('div');
     el.className = 'day';
-    const dow = (new Date(y, m, d).getDay() + 6) % 7;
+    const dow = (cellDate.getDay() + 6) % 7;
     if (dow === 5) el.classList.add('sat');
     if (dow === 6) el.classList.add('sun');
-    if (today.getFullYear() === y && today.getMonth() === m && today.getDate() === d) {
+    if (isCurrentMonth && today.getDate() === d) {
       el.classList.add('today');
+    } else if (cellDate < today) {
+      el.classList.add('past');
     }
     el.textContent = d;
     grid.appendChild(el);

@@ -4,119 +4,135 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>MEMO OS · Clock</title>
-<link rel="stylesheet" href="styles.css">
 <style>
-  html, body { margin: 0; height: 100%; }
+  :root {
+    --pink-bg-1: #fff5f8;
+    --pink-bg-2: #fde2ec;
+    --pink-text: #dc7494;
+    --pink-soft: #fce0e9;
+    --pink-mid: #fcd0de;
+    --pink-light: #fef0f5;
+    --display-pattern: #f0e8eb;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
   body {
+    background: transparent;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 8px;
-    background: transparent;
+    padding: 10px;
+    font-family: -apple-system, 'Pretendard', 'Apple SD Gothic Neo', system-ui, sans-serif;
   }
   .clock-card {
     width: 100%;
-    max-width: 320px;
-    aspect-ratio: 1.8 / 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    background: linear-gradient(165deg, #fffafc 0%, #fef0f5 60%, #fde2ec 100%);
+    max-width: 250px;
+    background: linear-gradient(170deg, #fff5f8 0%, #fde2ec 100%);
     border-radius: 22px;
-    padding: 16px 18px 18px;
-    box-shadow:
-      0 10px 24px rgba(255, 143, 171, 0.18),
-      inset 0 1px 0 #ffffff;
-    position: relative;
+    padding: 14px 16px 14px;
     border: 1px solid #fce0e9;
+    box-shadow:
+      0 8px 20px rgba(252, 208, 222, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    position: relative;
   }
   .clock-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 12px;
-    font-family: var(--font-serif);
+    margin-bottom: 8px;
+    padding: 0 2px;
   }
-  .clock-header .date {
-    font-size: 11px;
-    font-weight: 600;
-    font-style: italic;
-    color: var(--pink-text);
-    letter-spacing: 0.05em;
-  }
-  .clock-header .dots {
-    letter-spacing: 2px;
-    color: var(--pink-300);
+  .clock-date {
     font-size: 10px;
+    color: #d28aa3;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-style: italic;
+  }
+  .clock-date .heart {
+    color: #ec9bb2;
+    font-size: 11px;
+  }
+  .clock-dots {
+    font-size: 12px;
+    color: #d8b8c4;
+    letter-spacing: 1px;
+    line-height: 1;
+  }
+  .clock-display-wrap {
+    position: relative;
   }
   .clock-display {
     background: #ffffff;
     background-image:
-      linear-gradient(90deg, transparent 49.7%, rgba(252, 208, 222, 0.28) 49.7%, rgba(252, 208, 222, 0.28) 50.3%, transparent 50.3%),
-      linear-gradient(0deg, transparent 49.7%, rgba(252, 208, 222, 0.28) 49.7%, rgba(252, 208, 222, 0.28) 50.3%, transparent 50.3%);
-    background-size: 10px 10px;
-    border-radius: 14px;
-    padding: 16px 14px;
-    box-shadow: inset 0 2px 5px rgba(252, 208, 222, 0.4);
-    position: relative;
+      radial-gradient(circle at center, #ede4e7 0.7px, transparent 0.8px);
+    background-size: 7px 7px;
+    background-position: 3px 3px;
+    border-radius: 12px;
+    padding: 16px 14px 14px;
+    box-shadow:
+      inset 0 1px 2px rgba(0, 0, 0, 0.04),
+      inset 0 -1px 0 rgba(252, 208, 222, 0.15);
     display: flex;
     align-items: flex-end;
     justify-content: center;
-    gap: 6px;
+    gap: 3px;
     white-space: nowrap;
   }
-  .clock-display {
-    flex: 1;
-    min-height: 0;
-  }
   .clock-time {
-    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-family: 'Courier New', monospace;
     font-weight: 800;
-    font-size: clamp(36px, 13vw, 64px);
-    line-height: 1;
-    color: #3a2a32;
+    font-size: clamp(38px, 11.5vw, 58px);
+    line-height: 0.9;
+    color: #2a2a2a;
     letter-spacing: -2px;
   }
   .clock-ampm {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: Georgia, 'Times New Roman', serif;
     font-weight: 700;
-    font-size: clamp(11px, 3.5vw, 18px);
-    color: #3a2a32;
-    padding-bottom: 6px;
-    letter-spacing: 1px;
+    font-style: italic;
+    font-size: clamp(14px, 4vw, 20px);
+    color: #2a2a2a;
+    padding-bottom: 5px;
+    letter-spacing: 0;
   }
-  .clock-side {
+  .clock-side-btn {
     position: absolute;
-    right: -7px;
+    right: -8px;
     top: 50%;
     transform: translateY(-50%);
-    width: 14px;
-    height: 38px;
-    background: #fcd0de;
-    border-radius: 4px;
-    box-shadow: inset -1px 0 0 rgba(0,0,0,0.05);
+    width: 11px;
+    height: 32px;
+    background: linear-gradient(90deg, #f9b5c8, #fcd0de);
+    border-radius: 3px;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.5),
+      0 1px 2px rgba(220, 116, 148, 0.2);
   }
-  .clock-bottom {
+  .clock-footer {
     text-align: center;
     margin-top: 10px;
     font-size: 9px;
-    font-style: italic;
-    color: var(--text-soft);
-    letter-spacing: 0.06em;
+    color: #d8b8c4;
+    letter-spacing: 0.15em;
   }
 </style>
 </head>
 <body>
   <div class="clock-card">
     <div class="clock-header">
-      <span class="date">♥ <span id="date">5.26 TUE</span></span>
-      <span class="dots">···</span>
+      <span class="clock-date"><span class="heart">♥</span> <span id="date">5.24 SUN</span></span>
+      <span class="clock-dots">···</span>
     </div>
-    <div class="clock-display">
-      <span class="clock-time" id="time">10:45</span><span class="clock-ampm" id="ampm">AM</span>
-      <div class="clock-side"></div>
+    <div class="clock-display-wrap">
+      <div class="clock-display">
+        <span class="clock-time" id="time">05:08</span><span class="clock-ampm" id="ampm">PM</span>
+      </div>
+      <div class="clock-side-btn"></div>
     </div>
-    <div class="clock-bottom">⋆⁺₊ ⋆ ☾ ⋆⁺₊ ⋆</div>
+    <div class="clock-footer">⋆⁺₊ ☾ ₊⁺⋆</div>
   </div>
 <script>
   function pad(n){return String(n).padStart(2,'0');}

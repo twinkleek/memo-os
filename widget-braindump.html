@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MEMO OS · Brain Dump</title>
+<style>
+  :root {
+    --pink-text: #dc7494;
+    --pink-soft: #fce0e9;
+    --pink-light: #fef0f5;
+    --pink-mid: #fcd0de;
+    --pink-deep: #f599b3;
+    --pink-bg-1: #fff5f8;
+    --bubble-pink: #ffe5ed;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    background: transparent;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    font-family: -apple-system, 'Pretendard', system-ui, sans-serif;
+  }
+  .bd-card {
+    width: 100%;
+    max-width: 380px;
+    height: calc(100vh - 20px);
+    max-height: 640px;
+    background: #ffffff;
+    border: 1.5px solid var(--pink-mid);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(252, 208, 222, 0.25);
+    display: flex;
+    flex-direction: column;
+  }
+  .bd-topbar {
+    background: var(--pink-light);
+    padding: 7px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--pink-soft);
+    font-size: 11px;
+  }
+  .bd-topbar .title {
+    color: var(--pink-text);
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .bd-topbar .ctrl {
+    display: flex;
+    gap: 5px;
+    color: #d8b8c4;
+    font-size: 11px;
+  }
+  .bd-cover {
+    background: linear-gradient(180deg, #fef0f5, #ffffff);
+    padding: 12px 14px 6px;
+    text-align: center;
+    position: relative;
+  }
+  .bd-back {
+    position: absolute;
+    top: 8px; left: 12px;
+    color: var(--pink-text);
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .bd-avatar {
+    width: 64px;
+    height: 64px;
+    margin: 4px auto 4px;
+    background: var(--pink-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 42px;
+    line-height: 1;
+    border: 2px solid #ffffff;
+    box-shadow: 0 2px 6px rgba(252, 208, 222, 0.4);
+    position: relative;
+  }
+  .bd-link {
+    position: absolute;
+    top: 14px; right: 14px;
+    background: #ffffff;
+    color: var(--pink-text);
+    border: 1px solid var(--pink-mid);
+    border-radius: 16px;
+    padding: 3px 10px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .bd-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #5a4a52;
+    margin-top: 2px;
+  }
+  .bd-handle {
+    font-size: 10px;
+    color: #b29ba6;
+    margin-bottom: 4px;
+  }
+  .bd-bio {
+    font-size: 11px;
+    color: #5a4a52;
+    margin-bottom: 8px;
+  }
+  .bd-stats {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    font-size: 11px;
+    color: #5a4a52;
+    padding-bottom: 6px;
+  }
+  .bd-stats span b {
+    color: var(--pink-text);
+    font-weight: 700;
+    margin-right: 2px;
+  }
+  .bd-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--pink-soft);
+    background: #ffffff;
+  }
+  .bd-tab {
+    flex: 1;
+    text-align: center;
+    padding: 8px 0;
+    font-size: 11px;
+    color: #b29ba6;
+    cursor: pointer;
+    position: relative;
+    font-weight: 600;
+  }
+  .bd-tab.active {
+    color: var(--pink-text);
+  }
+  .bd-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 25%;
+    width: 50%;
+    height: 2px;
+    background: var(--pink-deep);
+    border-radius: 1px;
+  }
+  .bd-feed {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 4px 0;
+    background: #ffffff;
+  }
+  .bd-post {
+    padding: 9px 14px 8px;
+    border-bottom: 1px solid var(--pink-light);
+    display: flex;
+    gap: 8px;
+  }
+  .bd-post .pic {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    background: var(--pink-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+  .bd-post .body {
+    flex: 1;
+    min-width: 0;
+  }
+  .bd-post .meta {
+    font-size: 10px;
+    color: #b29ba6;
+    margin-bottom: 2px;
+  }
+  .bd-post .meta b {
+    color: #5a4a52;
+    font-weight: 700;
+    margin-right: 3px;
+  }
+  .bd-post .content {
+    font-size: 11.5px;
+    line-height: 1.4;
+    color: #5a4a52;
+  }
+  .bd-post .actions {
+    margin-top: 5px;
+    display: flex;
+    gap: 12px;
+    font-size: 10px;
+    color: #b29ba6;
+  }
+  .bd-input-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 10px;
+    border-top: 1px solid var(--pink-soft);
+    background: #ffffff;
+  }
+  .bd-input-row .pic {
+    width: 24px; height: 24px;
+    background: var(--pink-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .bd-input-row input {
+    flex: 1;
+    background: var(--pink-light);
+    border-radius: 14px;
+    padding: 6px 11px;
+    font-size: 11px;
+    color: #5a4a52;
+    border: none;
+    outline: none;
+    font-family: inherit;
+  }
+  .bd-input-row input::placeholder { color: #d8b8c4; }
+  .bd-input-row button {
+    background: var(--pink-mid);
+    color: #ffffff;
+    border-radius: 12px;
+    padding: 5px 12px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    border: none;
+    cursor: pointer;
+  }
+  .bd-input-row button:hover { background: var(--pink-deep); }
+</style>
+</head>
+<body>
+  <div class="bd-card">
+    <div class="bd-topbar">
+      <span class="title">🌸 som's braindump</span>
+      <span class="ctrl">▢ □ ×</span>
+    </div>
+    <div class="bd-cover">
+      <span class="bd-back">‹</span>
+      <span class="bd-link">LINK</span>
+      <div class="bd-avatar">🌸</div>
+      <div class="bd-name">SOM</div>
+      <div class="bd-handle">@som2som2</div>
+      <div class="bd-bio">안녕하세요 솜이입니다 ✦ · ·</div>
+      <div class="bd-stats">
+        <span><b id="ct">3</b>메모</span>
+        <span><b>♡</b>마음</span>
+      </div>
+    </div>
+    <div class="bd-tabs">
+      <span class="bd-tab active">메모</span>
+      <span class="bd-tab">답글</span>
+      <span class="bd-tab">마음</span>
+    </div>
+    <div class="bd-feed" id="feed"></div>
+    <div class="bd-input-row">
+      <span class="pic">🌸</span>
+      <input id="msg" placeholder="메모...">
+      <button onclick="send()">SEND</button>
+    </div>
+  </div>
+<script>
+const KEY = 'memoos_braindump';
+function load(){
+  try { return JSON.parse(localStorage.getItem(KEY)) || seed(); }
+  catch(e) { return seed(); }
+}
+function save(arr){ localStorage.setItem(KEY, JSON.stringify(arr)); }
+function seed(){
+  const now = Date.now();
+  return [
+    {t:'그래 아무래도 그렇겠지', d: now - 86400000 * 2 - 3600000},
+    {t:'진짜 머 어찌라는건지 머르겟네 ㅇㅅㅇ...ㅋㅋ', d: now - 86400000 - 1800000},
+    {t:'클립보드 누르면 노션 페이지 위로 올라가요', d: now - 7200000},
+  ];
+}
+function fmtDate(d){
+  const dt = new Date(d);
+  const M = dt.getMonth()+1;
+  const D = dt.getDate();
+  const h = String(dt.getHours()).padStart(2,'0');
+  const m = String(dt.getMinutes()).padStart(2,'0');
+  return `${M}월 ${D}일 ${h}:${m}`;
+}
+function render(){
+  const items = load();
+  document.getElementById('ct').textContent = items.length;
+  const feed = document.getElementById('feed');
+  feed.innerHTML = '';
+  items.slice().reverse().forEach(it => {
+    const post = document.createElement('div');
+    post.className = 'bd-post';
+    post.innerHTML = `
+      <div class="pic">🌸</div>
+      <div class="body">
+        <div class="meta"><b>SOM</b> @som2som2 · ${fmtDate(it.d)}</div>
+        <div class="content">${esc(it.t)}</div>
+        <div class="actions">💬 0  🔁 0  ♡ 0</div>
+      </div>`;
+    feed.appendChild(post);
+  });
+}
+function esc(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function send(){
+  const inp = document.getElementById('msg');
+  if(!inp.value.trim()) return;
+  const arr = load();
+  arr.push({t: inp.value.trim(), d: Date.now()});
+  save(arr);
+  inp.value = '';
+  render();
+}
+document.getElementById('msg').addEventListener('keydown', e => {
+  if(e.key === 'Enter'){ e.preventDefault(); send(); }
+});
+render();
+</script>
+</body>
+</html>

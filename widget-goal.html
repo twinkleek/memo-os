@@ -4,69 +4,87 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>MEMO OS · Today's Goal</title>
-<link rel="stylesheet" href="styles.css">
 <style>
-  html, body { margin: 0; height: 100%; }
+  :root {
+    --pink-text: #dc7494;
+    --pink-soft: #fce0e9;
+    --pink-light: #fef0f5;
+    --pink-mid: #fcd0de;
+    --pink-deep: #f599b3;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
   body {
+    background: transparent;
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    padding: 8px;
-    background: transparent;
+    padding: 10px;
+    font-family: -apple-system, 'Pretendard', system-ui, sans-serif;
   }
   .goal-card {
     width: 100%;
-    max-width: 320px;
+    max-width: 270px;
     background: #ffffff;
-    border-radius: 18px;
-    border: 1px solid #fce0e9;
-    box-shadow: 0 6px 18px rgba(255, 143, 171, 0.12);
+    border: 1.5px solid var(--pink-mid);
+    border-radius: 14px;
     overflow: hidden;
+    box-shadow: 0 4px 14px rgba(252, 208, 222, 0.25);
   }
-  .goal-header {
-    background: var(--pink-100);
-    padding: 8px 14px;
+  .goal-topbar {
+    background: var(--pink-light);
+    padding: 7px 12px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 1px solid #fce0e9;
+    border-bottom: 1px solid var(--pink-soft);
   }
-  .goal-title {
-    font-family: var(--font-serif);
-    font-style: italic;
-    font-size: 13px;
-    color: var(--text);
+  .goal-titlebox {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
   }
-  .goal-icon-box {
+  .goal-icon {
     background: #ffffff;
-    border-radius: 6px;
-    padding: 2px 6px;
-    font-size: 13px;
+    border: 1px solid var(--pink-mid);
+    border-radius: 5px;
+    padding: 2px 5px;
+    font-size: 12px;
+    line-height: 1;
   }
-  .goal-tools { color: #fcd0de; font-size: 12px; }
+  .goal-title {
+    font-family: Georgia, serif;
+    font-style: italic;
+    font-size: 13px;
+    color: #5a4a52;
+    font-weight: 600;
+  }
+  .goal-tools {
+    display: flex;
+    gap: 4px;
+    color: var(--pink-mid);
+    font-size: 11px;
+  }
   .goal-body {
     background: #fffafc;
-    padding: 14px;
-    min-height: 130px;
-    font-size: 12.5px;
-    line-height: 1.55;
-    color: var(--text);
+    padding: 12px 14px;
+    min-height: 100px;
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: #5a4a52;
     cursor: text;
     outline: none;
   }
   .goal-body:empty::before {
-    content: '오늘의 목표를 적어보세요 ⋆⁺₊ ⋆';
-    color: var(--text-soft);
+    content: '오늘의 목표를 적어보세요...';
+    color: #d8b8c4;
     font-style: italic;
   }
   .save-msg {
     text-align: center;
     font-size: 9px;
     color: var(--pink-text);
-    padding: 6px 0 8px;
+    padding: 4px 0 6px;
     font-style: italic;
     opacity: 0;
     transition: opacity 0.3s;
@@ -77,12 +95,12 @@
 </head>
 <body>
   <div class="goal-card">
-    <div class="goal-header">
-      <span class="goal-title">
-        <span class="goal-icon-box">🌸</span>
-        <span>today's goal</span>
-      </span>
-      <span class="goal-tools">✎</span>
+    <div class="goal-topbar">
+      <div class="goal-titlebox">
+        <span class="goal-icon">🌸</span>
+        <span class="goal-title">today's goal</span>
+      </div>
+      <div class="goal-tools">✎ ⇆</div>
     </div>
     <div class="goal-body" id="goal" contenteditable="true" oninput="saveGoal()"></div>
     <div class="save-msg" id="msg">저장됨 ♥</div>

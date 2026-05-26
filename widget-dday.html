@@ -4,97 +4,102 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>MEMO OS · D-day</title>
-<link rel="stylesheet" href="styles.css">
 <style>
-  html, body { margin: 0; height: 100%; }
+  :root {
+    --pink-text: #dc7494;
+    --pink-soft: #fce0e9;
+    --pink-light: #fef0f5;
+    --pink-mid: #fcd0de;
+    --pink-accent: #f599b3;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
   body {
+    background: transparent;
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    padding: 8px;
-    background: transparent;
+    padding: 10px;
+    font-family: -apple-system, 'Pretendard', system-ui, sans-serif;
   }
   .dday-card {
     width: 100%;
-    max-width: 320px;
-    background: linear-gradient(180deg, #fffafc, #fef0f5);
-    border: 1px solid #fce0e9;
-    border-radius: 18px;
-    padding: 12px 14px 12px;
-    box-shadow: 0 6px 18px rgba(255, 143, 171, 0.14);
+    max-width: 270px;
+    background: #ffffff;
+    border: 1.5px solid var(--pink-mid);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 14px rgba(252, 208, 222, 0.25);
   }
-  .dday-header {
+  .dday-topbar {
+    background: var(--pink-light);
+    padding: 6px 12px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
-    padding-bottom: 6px;
-    border-bottom: 1px dashed #fce0e9;
+    border-bottom: 1px solid var(--pink-soft);
+    font-size: 11px;
   }
   .dday-title {
-    font-family: var(--font-serif);
-    font-style: italic;
-    font-size: 12px;
     color: var(--pink-text);
-    font-weight: 600;
+    font-weight: 700;
     display: flex;
     align-items: center;
     gap: 5px;
   }
-  .dday-list { display: flex; flex-direction: column; gap: 6px; }
+  .dday-ctrl {
+    display: flex;
+    gap: 6px;
+    color: #d8b8c4;
+    font-size: 10px;
+  }
+  .dday-list {
+    padding: 8px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
   .dday-item {
-    background: #ffffff;
-    border: 1px solid #fce0e9;
-    border-radius: 10px;
-    padding: 7px 10px;
+    background: var(--pink-light);
+    border-radius: 8px;
+    padding: 6px 9px;
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 12px;
-    color: var(--text);
-    transition: transform 0.1s;
-  }
-  .dday-item:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 6px rgba(255, 143, 171, 0.15);
+    gap: 7px;
+    font-size: 11px;
+    color: #5a4a52;
   }
   .dday-badge {
-    background: var(--pink-100);
+    background: #ffffff;
     color: var(--pink-text);
     font-weight: 700;
-    border-radius: 6px;
-    padding: 3px 7px;
-    font-size: 10px;
-    min-width: 38px;
+    border-radius: 5px;
+    padding: 3px 6px;
+    font-size: 9px;
+    min-width: 32px;
     text-align: center;
     letter-spacing: 0.04em;
+    border: 1px solid var(--pink-mid);
   }
-  .dday-badge.urgent { background: #f599b3; color: #ffffff; }
-  .dday-badge.passed { background: #e5dbf2; color: #8a73a3; }
-  .dot { color: #f599b3; font-size: 7px; }
-  .dday-add {
-    margin-top: 8px;
-    background: transparent;
-    border: 1px dashed #fcd0de;
-    border-radius: 10px;
-    padding: 7px;
-    color: var(--pink-text);
-    font-size: 10px;
-    width: 100%;
+  .dday-badge.urgent { background: var(--pink-accent); color: #ffffff; border-color: var(--pink-accent); }
+  .dot { color: var(--pink-accent); font-size: 7px; }
+  .dday-foot {
+    border-top: 1px solid var(--pink-soft);
     text-align: center;
-    transition: background 0.15s;
+    padding: 4px 0;
+    color: #d8b8c4;
+    font-size: 10px;
   }
-  .dday-add:hover { background: #fef0f5; }
 </style>
 </head>
 <body>
   <div class="dday-card">
-    <div class="dday-header">
-      <span class="dday-title">💕 upcoming events</span>
-      <span class="win-dots"><span></span><span></span><span></span></span>
+    <div class="dday-topbar">
+      <span class="dday-title">💕 Upcoming Events</span>
+      <span class="dday-ctrl">↻ ⌄</span>
     </div>
     <div class="dday-list" id="list"></div>
-    <button class="dday-add" onclick="addEvent()">+ 새 이벤트</button>
+    <div class="dday-foot">⌄</div>
   </div>
 <script>
 const KEY = 'memoos_dday';
@@ -108,8 +113,6 @@ function seed(){
   const t = (d) => { const n = new Date(today); n.setDate(n.getDate()+d); return n.toISOString().split('T')[0]; };
   return [
     { title: '수익 마감', date: t(7) },
-    { title: '엠타트업 강의 업로드', date: t(14) },
-    { title: '브랜드 사진 촬영', date: t(21) },
   ];
 }
 function calcDay(dateStr){
@@ -122,12 +125,12 @@ function render(){
   const list = document.getElementById('list');
   list.innerHTML = '';
   items.sort((a,b) => new Date(a.date) - new Date(b.date));
-  items.forEach((it, idx) => {
+  items.forEach((it) => {
     const d = calcDay(it.date);
     let label, badgeClass = '';
     if (d === 0) { label = 'D-day'; badgeClass = 'urgent'; }
     else if (d > 0) { label = 'D-' + d; if (d <= 3) badgeClass = 'urgent'; }
-    else { label = 'D+' + Math.abs(d); badgeClass = 'passed'; }
+    else { label = 'D+' + Math.abs(d); }
     const row = document.createElement('div');
     row.className = 'dday-item';
     row.innerHTML = `<span class="dday-badge ${badgeClass}">${label}</span><span class="dot">●</span><span>${esc(it.title)}</span>`;
@@ -135,11 +138,6 @@ function render(){
   });
 }
 function esc(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-function addEvent(){
-  const t = prompt('이벤트 이름:'); if(!t) return;
-  const d = prompt('날짜 (YYYY-MM-DD):'); if(!d) return;
-  const items = load(); items.push({title:t, date:d}); save(items); render();
-}
 render();
 </script>
 </body>
