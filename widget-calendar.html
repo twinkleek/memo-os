@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MEMO OS · Calendar</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  body {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 16px;
+    background: transparent;
+  }
+  .cal-card {
+    width: 280px;
+    background: #fff5f8;
+    border-radius: 18px;
+    padding: 14px 16px 18px;
+    box-shadow: 0 4px 16px rgba(255, 143, 171, 0.18);
+    border: 1px solid #ffd1dc;
+    font-family: -apple-system, "Pretendard", sans-serif;
+  }
+  .cal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--pink-text);
+    font-size: 11px;
+    margin-bottom: 8px;
+  }
+  .cal-title {
+    text-align: center;
+    font-weight: 600;
+    font-size: 15px;
+    color: #5a4a52;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+  .cal-nav {
+    cursor: pointer;
+    color: var(--pink-mid);
+    font-size: 12px;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  .cal-nav:hover { background: var(--pink-soft); color: var(--pink-text); }
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    font-size: 11px;
+    text-align: center;
+  }
+  .cal-grid .dow {
+    color: var(--pink-text);
+    font-weight: 600;
+    padding: 4px 0;
+    font-size: 10px;
+  }
+  .cal-grid .day {
+    padding: 6px 0;
+    color: #5a4a52;
+    border-radius: 50%;
+    cursor: default;
+  }
+  .cal-grid .other { color: #d8b8c4; }
+  .cal-grid .today {
+    background: var(--pink-mid);
+    color: white;
+    font-weight: 700;
+  }
+  .cal-grid .sat { color: #87a8d8; }
+  .cal-grid .sun { color: #e8849b; }
+  .cal-grid .other.sat { color: #c5d4e8; }
+  .cal-grid .other.sun { color: #efc9d2; }
+  .cal-footer {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 9px;
+    color: var(--text-light);
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+  <div class="cal-card">
+    <div class="cal-header">
+      <span>📅 calendar</span>
+      <span>···</span>
+    </div>
+    <div class="cal-title">
+      <span class="cal-nav" onclick="navMonth(-1)">‹</span>
+      <span id="title">2026.05</span>
+      <span class="cal-nav" onclick="navMonth(1)">›</span>
+    </div>
+    <div class="cal-grid" id="grid"></div>
+    <div class="cal-footer">SOMLUTION ♥</div>
+  </div>
+<script>
+const DOW = ['Mo','Tu','We','Th','Fr','Sa','Su'];
+let view = new Date();
+function render(){
+  const y = view.getFullYear();
+  const m = view.getMonth();
+  document.getElementById('title').textContent = y + '.' + String(m+1).padStart(2,'0');
+  const today = new Date();
+  const firstOfMonth = new Date(y, m, 1);
+  const startDow = (firstOfMonth.getDay() + 6) % 7; // Mon=0
+  const daysInMonth = new Date(y, m+1, 0).getDate();
+  const prevDays = new Date(y, m, 0).getDate();
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  DOW.forEach(d => {
+    const el = document.createElement('div');
+    el.className = 'dow';
+    el.textContent = d;
+    grid.appendChild(el);
+  });
+  for (let i = startDow - 1; i >= 0; i--) {
+    const el = document.createElement('div');
+    el.className = 'day other';
+    if ((i % 7) === 5) el.classList.add('sat');
+    if ((i % 7) === 6) el.classList.add('sun');
+    el.textContent = prevDays - i;
+    grid.appendChild(el);
+  }
+  for (let d = 1; d <= daysInMonth; d++) {
+    const el = document.createElement('div');
+    el.className = 'day';
+    const dow = (new Date(y, m, d).getDay() + 6) % 7;
+    if (dow === 5) el.classList.add('sat');
+    if (dow === 6) el.classList.add('sun');
+    if (today.getFullYear() === y && today.getMonth() === m && today.getDate() === d) {
+      el.classList.add('today');
+    }
+    el.textContent = d;
+    grid.appendChild(el);
+  }
+  let trailing = 7 - ((startDow + daysInMonth) % 7);
+  if (trailing === 7) trailing = 0;
+  for (let i = 1; i <= trailing; i++) {
+    const el = document.createElement('div');
+    el.className = 'day other';
+    const dow = (startDow + daysInMonth + i - 1) % 7;
+    if (dow === 5) el.classList.add('sat');
+    if (dow === 6) el.classList.add('sun');
+    el.textContent = i;
+    grid.appendChild(el);
+  }
+}
+function navMonth(d){
+  view = new Date(view.getFullYear(), view.getMonth() + d, 1);
+  render();
+}
+render();
+</script>
+</body>
+</html>

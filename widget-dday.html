@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MEMO OS · D-day</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  body {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 16px;
+    background: transparent;
+  }
+  .dday-card {
+    width: 260px;
+    background: #fff5f8;
+    border: 1.5px solid var(--pink-mid);
+    border-radius: 14px;
+    padding: 12px 14px;
+    box-shadow: 0 4px 14px rgba(255, 143, 171, 0.15);
+  }
+  .dday-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--pink-text);
+    font-size: 12px;
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+  .dday-list { display: flex; flex-direction: column; gap: 8px; }
+  .dday-item {
+    background: white;
+    border: 1px solid var(--pink-soft);
+    border-radius: 10px;
+    padding: 8px 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: #5a4a52;
+  }
+  .dday-badge {
+    background: var(--pink-mid);
+    color: white;
+    font-weight: 700;
+    border-radius: 8px;
+    padding: 3px 8px;
+    font-size: 11px;
+    min-width: 38px;
+    text-align: center;
+  }
+  .dday-badge.urgent { background: #e8849b; }
+  .dot { color: var(--pink-accent); font-size: 8px; }
+  .dday-add {
+    background: var(--pink-soft);
+    border: 1px dashed var(--pink-mid);
+    color: var(--pink-text);
+    font-size: 11px;
+    padding: 6px;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    margin-top: 6px;
+    width: 100%;
+  }
+  .dday-add:hover { background: var(--pink-mid); color: white; }
+</style>
+</head>
+<body>
+  <div class="dday-card">
+    <div class="dday-header">
+      <span>💕 Upcoming Events</span>
+      <span style="color: var(--pink-mid); font-weight: normal;">↻ ⌄</span>
+    </div>
+    <div class="dday-list" id="list"></div>
+    <button class="dday-add" onclick="addEvent()">+ 새 이벤트</button>
+  </div>
+<script>
+const KEY = 'memoos_dday';
+function load(){ try{return JSON.parse(localStorage.getItem(KEY)) || sample();}catch(e){return sample();} }
+function save(items){ localStorage.setItem(KEY, JSON.stringify(items)); }
+function sample(){
+  const today = new Date();
+  const t = (d) => { const n = new Date(today); n.setDate(n.getDate()+d); return n.toISOString().split('T')[0]; };
+  return [
+    { title: '수익 마감', date: t(7) },
+    { title: '엠타트업 강의 업로드', date: t(14) },
+  ];
+}
+function calcDay(dateStr){
+  const target = new Date(dateStr);
+  const today = new Date(); today.setHours(0,0,0,0);
+  const diff = Math.ceil((target - today) / (1000*60*60*24));
+  return diff;
+}
+function render(){
+  const items = load();
+  const list = document.getElementById('list');
+  list.innerHTML = '';
+  items.forEach((it, idx) => {
+    const d = calcDay(it.date);
+    const label = d === 0 ? 'D-day' : d > 0 ? 'D-' + d : 'D+' + Math.abs(d);
+    const urgent = d >= 0 && d <= 3;
+    const row = document.createElement('div');
+    row.className = 'dday-item';
+    row.innerHTML = `<span class="dday-badge ${urgent?'urgent':''}">${label}</span><span class="dot">●</span><span>${it.title}</span>`;
+    list.appendChild(row);
+  });
+}
+function addEvent(){
+  const t = prompt('이벤트 이름:'); if(!t) return;
+  const d = prompt('날짜 (YYYY-MM-DD):'); if(!d) return;
+  const items = load(); items.push({title:t, date:d}); save(items); render();
+}
+render();
+</script>
+</body>
+</html>

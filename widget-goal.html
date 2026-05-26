@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MEMO OS · Today's Goal</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  body {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 16px;
+    background: transparent;
+  }
+  .goal-card {
+    width: 280px;
+    background: white;
+    border-radius: 16px;
+    border: 1px solid var(--pink-soft);
+    box-shadow: 0 4px 14px rgba(255, 143, 171, 0.10);
+    padding: 14px 16px;
+  }
+  .goal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .goal-title {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-style: italic;
+    font-size: 17px;
+    color: #5a4a52;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .goal-icon-box {
+    background: var(--pink-soft);
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 13px;
+  }
+  .goal-tools { color: var(--pink-mid); font-size: 14px; }
+  .goal-body {
+    background: var(--pink-bg);
+    border-radius: 12px;
+    padding: 12px;
+    min-height: 100px;
+    font-size: 13px;
+    color: #5a4a52;
+    cursor: text;
+    outline: none;
+  }
+  .goal-body:empty::before {
+    content: '오늘의 목표를 적어보세요...';
+    color: var(--text-light);
+    font-style: italic;
+  }
+  .goal-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+  }
+  .goal-checkbox input[type="checkbox"] {
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border: 1.5px solid var(--pink-mid);
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  .goal-checkbox input[type="checkbox"]:checked { background: var(--pink-mid); }
+  .save-msg {
+    text-align: center;
+    font-size: 10px;
+    color: var(--pink-text);
+    margin-top: 6px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .save-msg.show { opacity: 1; }
+</style>
+</head>
+<body>
+  <div class="goal-card">
+    <div class="goal-header">
+      <span class="goal-title"><span class="goal-icon-box">🌸</span><span>today's goal</span></span>
+      <span class="goal-tools">✎ ⇆</span>
+    </div>
+    <div class="goal-body" id="goal" contenteditable="true" oninput="saveGoal()"></div>
+    <div class="save-msg" id="msg">저장됨 ♥</div>
+  </div>
+<script>
+const KEY = 'memoos_goal';
+const goal = document.getElementById('goal');
+const msg = document.getElementById('msg');
+goal.innerHTML = localStorage.getItem(KEY) || '';
+let to;
+function saveGoal(){
+  clearTimeout(to);
+  to = setTimeout(() => {
+    localStorage.setItem(KEY, goal.innerHTML);
+    msg.classList.add('show');
+    setTimeout(() => msg.classList.remove('show'), 1200);
+  }, 400);
+}
+</script>
+</body>
+</html>

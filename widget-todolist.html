@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MEMO OS · To-do</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  body {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 16px;
+    background: transparent;
+  }
+  .todo-card {
+    width: 280px;
+    background: #fff5f8;
+    border: 1.5px solid var(--pink-mid);
+    border-radius: 14px;
+    padding: 0;
+    overflow: hidden;
+    box-shadow: 0 4px 14px rgba(255, 143, 171, 0.15);
+  }
+  .todo-header {
+    background: var(--pink-soft);
+    padding: 8px 12px;
+    font-size: 11px;
+    color: var(--pink-text);
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--pink-mid);
+  }
+  .todo-dots { display: flex; gap: 4px; }
+  .todo-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--pink-mid); opacity: 0.5; }
+  .todo-input {
+    display: flex;
+    padding: 8px;
+    gap: 6px;
+    background: white;
+    border-bottom: 1px solid var(--pink-soft);
+  }
+  .todo-input input {
+    flex: 1;
+    background: var(--pink-soft);
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 12px;
+    color: #5a4a52;
+  }
+  .todo-input input::placeholder { color: var(--text-light); }
+  .todo-input button {
+    background: var(--pink-mid);
+    color: white;
+    border-radius: 6px;
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+    font-weight: bold;
+  }
+  .todo-list {
+    padding: 8px 0;
+    max-height: 240px;
+    overflow-y: auto;
+    background: white;
+  }
+  .todo-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px;
+    font-size: 12px;
+    color: #5a4a52;
+    border-bottom: 1px solid #fef0f4;
+  }
+  .todo-item:last-child { border: none; }
+  .todo-item input[type="checkbox"] {
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border: 1.5px solid var(--pink-mid);
+    border-radius: 3px;
+    cursor: pointer;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .todo-item input[type="checkbox"]:checked {
+    background: var(--pink-mid);
+  }
+  .todo-item input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    color: white;
+    font-size: 10px;
+    top: -2px;
+    left: 2px;
+  }
+  .todo-item.done span { text-decoration: line-through; color: var(--text-light); }
+  .todo-item .text { flex: 1; }
+  .todo-item .del {
+    color: var(--pink-mid);
+    font-size: 11px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .todo-item:hover .del { opacity: 1; }
+  .todo-heart { color: var(--pink-mid); font-size: 10px; cursor: pointer; }
+</style>
+</head>
+<body>
+  <div class="todo-card">
+    <div class="todo-header">
+      <span>📋 to do list</span>
+      <div class="todo-dots"><div class="todo-dot"></div><div class="todo-dot"></div><div class="todo-dot"></div></div>
+    </div>
+    <div class="todo-input">
+      <input id="inp" placeholder="할 일 추가..." onkeydown="if(event.key==='Enter')add()">
+      <button onclick="add()">+</button>
+    </div>
+    <div class="todo-list" id="list"></div>
+  </div>
+<script>
+const KEY = 'memoos_todo';
+function load(){ try{return JSON.parse(localStorage.getItem(KEY)) || sample();}catch(e){return sample();} }
+function save(items){ localStorage.setItem(KEY, JSON.stringify(items)); }
+function sample(){ return [
+  {t:'SNS 사진 업로드', d:false},
+  {t:'다이어트 식단 인증', d:false},
+  {t:'줌인스킨 채널 분석', d:true},
+];}
+function render(){
+  const items = load();
+  const list = document.getElementById('list');
+  list.innerHTML = '';
+  items.forEach((it, i) => {
+    const row = document.createElement('div');
+    row.className = 'todo-item' + (it.d ? ' done' : '');
+    row.innerHTML = `<input type="checkbox" ${it.d?'checked':''} data-i="${i}"><span class="text">${it.t}</span><span class="todo-heart">♡</span><span class="del" data-i="${i}">×</span>`;
+    list.appendChild(row);
+  });
+  list.querySelectorAll('input[type="checkbox"]').forEach(c => {
+    c.onchange = () => { const items = load(); items[c.dataset.i].d = c.checked; save(items); render(); };
+  });
+  list.querySelectorAll('.del').forEach(d => {
+    d.onclick = () => { const items = load(); items.splice(d.dataset.i, 1); save(items); render(); };
+  });
+}
+function add(){
+  const inp = document.getElementById('inp');
+  if(!inp.value.trim()) return;
+  const items = load();
+  items.push({t: inp.value.trim(), d: false});
+  save(items);
+  inp.value = '';
+  render();
+}
+render();
+</script>
+</body>
+</html>
